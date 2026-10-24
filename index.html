@@ -857,11 +857,37 @@ function logoSources(t) {
   return [`https://images.fifaindex.com/${version}/teams/${t.id}.png`];
 }
 
+// FIFA Index's image server turns away bursts of requests (a grid of 48 crests at once
+// gets some 403s), so every image load goes through this queue: at most 4 at a time,
+// each retried once after a short pause. Resolves with the loaded <img>, or null.
+const ImgQueue = (() => {
+  const MAX = 4, waiting = [];
+  let active = 0;
+  function pump() {
+    while (active < MAX && waiting.length) {
+      const { src, resolve } = waiting.shift();
+      active++;
+      const attempt = retry => {
+        const img = new Image();
+        img.decoding = "async";
+        img.onload = () => { active--; pump(); resolve(img); };
+        img.onerror = () => {
+          if (retry) setTimeout(() => attempt(false), 1500);  // keeps its slot during the pause
+          else { active--; pump(); resolve(null); }
+        };
+        img.src = src;
+      };
+      attempt(true);
+    }
+  }
+  return { load: src => new Promise(resolve => { waiting.push({ src, resolve }); pump(); }) };
+})();
+
 // Start fetching crests early (e.g. while the picker is still cycling names).
-const preloaded = new Map();
+const preloaded = new Set();
 function preloadLogo(t) {
   const src = logoSources(t)[0];
-  if (src && !preloaded.has(src)) { const img = new Image(); img.src = src; preloaded.set(src, img); }
+  if (src && !preloaded.has(src)) { preloaded.add(src); ImgQueue.load(src); }
 }
 
 // Fallback if the FIFA Index crest fails to load: the club's Wikipedia article image.
@@ -888,22 +914,34 @@ function initials(name) {
   return name.split(/\s+/).filter(w => /^[A-ZÀ-Ý0-9]/.test(w)).map(w => w[0]).join("").slice(0, 3) || name[0];
 }
 
-// Fills a .logo box with initials, then swaps in the crest/flag once it loads.
-function setLogo(box, t, { wiki = true } = {}) {
+// Fills a .logo box with initials, then swaps in the crest/flag once it loads:
+// each source in turn, then the club's Wikipedia image, otherwise the initials stay.
+async function setLogo(box, t) {
   box.textContent = initials(t.name);
-  const img = new Image();
-  img.alt = t.name;
-  img.decoding = "async";
-  if (t.nation) img.className = "flag";
-  const sources = logoSources(t);
-  let next = 0;
-  img.onload = () => { box.textContent = ""; box.appendChild(img); };
-  img.onerror = () => {
-    if (next < sources.length) img.src = sources[next++];
-    else if (wiki && !t.nation && next++ === sources.length) wikiLogo(t).then(src => { if (src) img.src = src; });
+  const show = img => {
+    if (!img || !box.isConnected) return !!img;
+    img.alt = t.name;
+    if (t.nation) img.className = "flag";
+    box.textContent = "";
+    box.appendChild(img);
+    return true;
   };
-  if (sources.length) img.src = sources[next++];
+  for (const src of logoSources(t)) if (show(await ImgQueue.load(src))) return;
+  if (!t.nation) {
+    const src = await wikiLogo(t);
+    if (src) show(await ImgQueue.load(src));
+  }
 }
+
+// Crests for long lists (the team browser) load only as their cards scroll into view.
+const lazyLogos = "IntersectionObserver" in window && new IntersectionObserver(entries => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    lazyLogos.unobserve(e.target);
+    const t = TEAM_BY_NAME.get(e.target.dataset.team);
+    if (t) setLogo(e.target, t);
+  }
+}, { rootMargin: "200px" });
 
 function ratingsHtml(t) {
   return [["OVR", t.ovr], ["ATT", t.att], ["MID", t.mid], ["DEF", t.def]]
@@ -1131,18 +1169,18 @@ function renderBrowse(keepLimit) {
   $("bCount").textContent = `· ${list.length}`;
   $("bGrid").innerHTML = list.slice(0, browseLimit).map(t => `
     <button class="tcard" data-team="${esc(t.name)}">
-      <span class="logo">${t.nation && t.flag ? "" : esc(initials(t.name))}<img loading="lazy" alt="" src="${logoSources(t)[0] || ""}"${t.nation ? ' class="flag"' : ""}></span>
+      <span class="logo" data-team="${esc(t.name)}">${esc(initials(t.name))}</span>
       <span class="tc-name">${esc(t.name)}</span>
       <span class="tc-meta">${esc(t.league)}</span>
       <span class="tc-stats"><b class="${ratingClass(t.ovr)}">${t.ovr}</b><span class="stars"${t.approx ? ` title="${APPROX_TITLE}"` : ""}>${starsText(t)}</span></span>
     </button>`).join("") || '<p class="empty">No teams match.</p>';
   $("bMore").hidden = list.length <= browseLimit;
+  if (lazyLogos) lazyLogos.disconnect();  // the previous cards are gone
+  $("bGrid").querySelectorAll(".logo[data-team]").forEach(box => {
+    if (lazyLogos) lazyLogos.observe(box);
+    else setLogo(box, TEAM_BY_NAME.get(box.dataset.team));
+  });
 }
-// Crest images: hide the initials once loaded, drop the image if it fails
-$("bGrid").addEventListener("load", e => {
-  if (e.target.tagName === "IMG") [...e.target.parentNode.childNodes].forEach(n => { if (n.nodeType === 3) n.remove(); });
-}, true);
-$("bGrid").addEventListener("error", e => { if (e.target.tagName === "IMG") e.target.remove(); }, true);
 $("browse").addEventListener("toggle", () => { if ($("browse").open) renderBrowse(); });
 $("bSearch").addEventListener("input", () => renderBrowse());
 $("bSort").addEventListener("change", () => renderBrowse());
