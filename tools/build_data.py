@@ -53,10 +53,47 @@ STAR_NAMES = {
     "Odense Boldklub": "OB Odense", "RC Deportivo": "Deportivo La Coruña", "Le Havre AC": "Le Havre",
     "Real Valladolid": "Valladolid", "Avellino": "Avelino", "Instituto de Córdoba": "Instituto",
     "Petrolul Ploiești": "FC Petrolul", "Vejle BK": "Vejle Boldklub",
+    # FC 27's list uses the in-game short / unlicensed names
+    "Inter": "Lombardia FC", "Atalanta": "Bergamo Calcio", "Athletic Club de Bilbao": "Athletic Club",
+    "Como": "Como 1907", "RC Celta de Vigo": "Celta", "LOSC Lille": "LOSC", "Olympique Lyonnais": "OL",
+    "Olympique de Marseille": "OM", "Sporting de Braga": "SC Braga", "Genk": "KRC Genk", "Los Angeles FC": "LAFC",
+    "Vancouver Whitecaps": "Whitecaps FC", "Genoa": "Genoa CFC", "Racing de Santander": "R. Racing Club",
+    "Çorum F.K.": "Çorum FK", "New England Revolution": "New England", "Seattle Sounders": "Sounders FC",
+    "VfL Bochum": "VfL Bochum 1848", "Estoril": "Estoril Praia", "Vitória de Guimarães": "Vitória SC",
+    "FC Basel": "FC Basel 1893", "Heart of Midlothian": "Hearts", "Jagiellonia Białystok": "Jagiellonia",
+    "Gent": "KAA Gent", "Fortuna Düsseldorf": "Düsseldorf", "Charleroi": "Sporting Charleroi",
+    "AS Nancy": "AS Nancy Lorraine", "Corvinul Hunedoara": "Corvinul 1921", "FC Sochaux": "FCSM",
+    "Dijon FCO": "Dijon", "Liaoning Tieren": "Liaoning FC", "Chongqing Tonglianglong F.C.": "Chongqing FC",
 }
+# Names that changed between games: try each in turn
+STAR_NAMES_MORE = {
+    "Deportivo Alavés": ["D. Alavés"], "Real Sporting de Gijón": ["Sporting de Gijón", "R. Sporting"],
+    "Dinamo București": ["Dinamo Bucuresti", "FC Dinamo 1948"], "FC Rapid": ["FC Rapid 1923"],
+    "Red Bull New York": ["Red Bulls"], "Beijing Guoan": ["Beijing Sinobo Guoan", "Beijing FC"],
+    "Tianjin Jinmen Tiger": ["Tianjin JMT FC"], "Chengdu Rongcheng F.C.": ["Chengdu Rongcheng", "Chengdu FC"],
+    "Rodez Aveyron Football": ["Rodez AF"], "Antwerp": ["Royal Antwerp FC"],
+    "Sønderjyske Fodbold": ["SønderjyskE Fodbold", "SønderjyskE"],
+    "FK Csíkszereda Miercurea Ciuc": ["Csíkszereda Ciuc", "FK Csikszereda"],
+}
+def star_names(club):
+    return [n for n in [STAR_NAMES.get(club)] + STAR_NAMES_MORE.get(club, []) if n]
 # Teams the fuzzy matcher pairs with the wrong club; these always get estimated stars
 NO_STAR_MATCH = {"Palmeiras", "Internacional", "Viktoria Plzeň", "Atlético Bucaramanga", "Deportivo La Guaira",
                  "Deportivo Táchira", "Canada"}
+
+# League page slugs (stable across games). FIFA Index bot-protects deep pages of the
+# all-teams list and its leagues index, so these make sure every league is still covered.
+KNOWN_LEAGUES = (
+    "1-denmark-superliga-1 10-holland-eredivisie-1 1003-conmebol-libertadores 1014-conmebol-sudamericana "
+    "13-england-premier-league-1 14-england-championship-2 16-france-ligue-1-1 17-france-ligue-2-2 "
+    "189-switzerland-super-league-1 19-germany-1-bundesliga-1 20-germany-2-bundesliga-2 2012-china-super-league-1 "
+    "2076-germany-3-liga-3 2149-indian-super-league-1 308-portugal-primeira-liga-1 31-italy-serie-a-1 "
+    "32-italy-serie-b-2 330-romania-liga-i-1 350-saudi-pro-league-1 351-australia-a-league-1 "
+    "353-argentina-primera-division-1 39-usa-major-league-soccer-1 4-belgium-pro-league-1 41-norway-eliteserien-1 "
+    "50-scotland-premiership-1 53-spain-primera-division-1 54-spain-segunda-division-2 56-sweden-allsvenskan-1 "
+    "60-england-league-one-3 61-england-league-two-4 65-rep-ireland-premier-division-1 66-poland-ekstraklasa-1 "
+    "68-turkey-super-lig-1 76-rest-of-world 80-austria-bundesliga-1 83-korea-k-league-1-1"
+).split()
 
 LEAGUE_NAMES = {"England Premier League": "Premier League", "Spain Primera División": "LALIGA",
                 "Italy Serie A": "Serie A", "Germany 1. Bundesliga": "Bundesliga", "France Ligue 1": "Ligue 1",
@@ -69,8 +106,9 @@ def log(*a):
     print(*a, file=sys.stderr, flush=True)
 
 
-def fetch(url):
-    """GET with a disk cache, spacing and retries for FIFA Index's bot challenge."""
+def fetch(url, optional=False):
+    """GET with a disk cache, spacing and retries for FIFA Index's bot challenge.
+    optional=True gives up quickly and returns None instead of stopping the build."""
     os.makedirs(CACHE, exist_ok=True)
     path = os.path.join(CACHE, hashlib.sha1(url.encode()).hexdigest() + ".html")
     if os.path.exists(path):
@@ -81,6 +119,9 @@ def fetch(url):
         if "Just a moment" not in body[:3000]:
             open(path, "w", encoding="utf8").write(body)
             return body
+        if optional and attempt >= 1:
+            log(f"  blocked, skipping {url}")
+            return None
         wait = min(60 * (attempt + 1), 300)  # back off harder each time, up to 5 minutes
         log(f"  rate-limited, waiting {wait}s ({attempt + 1}/10) {url}")
         time.sleep(wait)
@@ -143,14 +184,15 @@ def match_stars(clubs, stars):
     for n, s in stars:  # first (highest-ranked) entry wins for duplicate names
         by_name.setdefault(n, s)
         by_norm.setdefault(norm(n), s)
-    claimed = {norm(v) for v in STAR_NAMES.values()}
+    claimed = {norm(n) for club in set(STAR_NAMES) | set(STAR_NAMES_MORE) for n in star_names(club)}
     no_match = {norm(x) for x in NO_STAR_MATCH}
     for r in clubs:
         r["stars"] = None
         if norm(r["name"]) in no_match:
             continue
-        if STAR_NAMES.get(r["name"]) in by_name:
-            r["stars"] = by_name[STAR_NAMES[r["name"]]]
+        listed = next((n for n in star_names(r["name"]) if n in by_name), None)
+        if listed:
+            r["stars"] = by_name[listed]
         elif norm(r["name"]) in by_norm:
             r["stars"] = by_norm[norm(r["name"])]
         else:
@@ -186,9 +228,15 @@ def main():
     base_list = f"https://fifaindex.com/teams{suffix}"
     log(f"Building {label} ({'current game' if not suffix else 'older game'})")
 
-    rows, league_urls, page = {}, set(), 1
+    rows, page = {}, 1
+    league_urls = {f"/leagues/{slug}{suffix}" for slug in KNOWN_LEAGUES}
     while True:
-        found, leagues = parse_list(fetch(f"{base_list}?page={page}"), suffix)
+        # The all-teams list only adds teams outside the known leagues, so it's best-effort
+        listing = fetch(f"{base_list}?page={page}", optional=True)
+        if listing is None:
+            log(f"  list page {page} blocked; continuing with league pages")
+            break
+        found, leagues = parse_list(listing, suffix)
         league_urls |= leagues
         if not found:
             break
@@ -201,7 +249,8 @@ def main():
         for r in parse_league(fetch("https://fifaindex.com" + u), suffix):
             rows[r["id"]] = r
         log(f"  league {i}/{len(league_urls)}")
-    clubs = [r for r in rows.values() if not WOMEN.search(r["league"]) and not r["name"].endswith("W")]
+    clubs = [r for r in rows.values() if not WOMEN.search(r["league"]) and not r["name"].endswith("W")
+             and not r["name"].startswith("Marketing Team") and r["ovr"] >= 40]  # skip placeholder / 0-rated teams
 
     nations = []
     for i, (name, (tid, flag)) in enumerate(NATIONS.items(), 1):
