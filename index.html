@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FC 26 Team Picker</title>
+<title>FC Team Picker</title>
 <!-- Fallback logo hosts: open connections early in case a local crest is missing -->
 <link rel="preconnect" href="https://images.fifaindex.com">
 <link rel="preconnect" href="https://flagcdn.com">
@@ -284,6 +284,118 @@
   }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+  /* Header controls: game version + mute */
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .header-actions .cselect { flex: 0 0 auto; min-width: 104px; }
+  .header-actions .cselect-btn { border-radius: 999px; padding: 11px 16px; font-weight: 600; }
+  .header-actions .cselect-list { left: auto; right: 0; }
+
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .card-head h2 { margin: 0; }
+  .btn.small { padding: 8px 14px; font-size: 14px; border-radius: 12px; }
+
+  /* Player skill dots (only shown when handicap is on) */
+  .skill {
+    display: none; gap: 3px; align-items: center; background: none; border: none; padding: 4px 6px;
+    cursor: pointer; border-radius: 999px; transition: box-shadow .25s;
+  }
+  .skill i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.35); }
+  .skill i.on { background: var(--accent-hover); border-color: var(--accent-hover); box-shadow: 0 0 6px var(--accent-glow); }
+  .skill:hover { box-shadow: 0 0 12px var(--glow); }
+  .chips.show-skill .skill { display: inline-flex; }
+  .skill-hint { color: var(--muted); font-size: 13px; margin-top: 10px; display: none; }
+  .chips.show-skill + .skill-hint { display: block; }
+
+  /* Browse teams */
+  details.browse > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  details.browse > summary::-webkit-details-marker { display: none; }
+  details.browse > summary h2 { margin: 0; }
+  details.browse > summary svg { opacity: .6; transition: transform .25s; }
+  details.browse[open] > summary svg { transform: rotate(180deg); }
+  .browse-tools { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 14px; }
+  .browse-tools input { flex: 2 1 200px; }
+  .browse-tools .cselect { flex: 1 1 150px; }
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .tcard {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 14px 10px;
+    background: rgba(0,0,0,.25); border: 1px solid var(--faint); border-radius: 16px; cursor: pointer;
+    transition: box-shadow .25s, border-color .25s, transform .2s;
+  }
+  .tcard:hover { box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 0 18px var(--glow); transform: translateY(-2px); }
+  .tcard .logo { width: 48px; height: 48px; border-radius: 12px; }
+  .tcard .logo img { max-width: 40px; max-height: 40px; }
+  .tc-name { font-weight: 600; font-size: 14px; line-height: 1.2; }
+  .tc-meta { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .tc-stats { font-size: 13px; display: flex; gap: 8px; align-items: center; }
+  .tc-stats .stars { font-size: 13px; }
+  .show-more { display: block; margin: 14px auto 0; }
+
+  /* "Give this team to…" menu */
+  .assign-menu {
+    position: fixed; z-index: 900; min-width: 180px; max-height: 300px; overflow-y: auto; padding: 6px;
+    border-radius: 16px; background: rgba(14, 30, 21, .98); border: 1px solid var(--glass-border-light);
+    box-shadow: 0 20px 40px rgba(0,0,0,.45), 0 0 24px var(--glow);
+  }
+  .assign-menu .am-title { font-size: 12px; color: var(--muted); padding: 6px 12px 4px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+
+  /* Tournament */
+  .tour-banner {
+    display: flex; align-items: center; gap: 16px; padding: 20px 24px; margin-bottom: 20px; border-radius: 24px;
+    border: 1px solid rgba(255,214,10,.5); box-shadow: 0 0 30px rgba(255,214,10,.2);
+  }
+  .tour-banner .trophy { font-size: 40px; }
+  .tour-banner .tb-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold); font-weight: 700; }
+  .tour-banner .tb-name { font-size: 26px; font-weight: 700; }
+  .tour-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .table-wrap { overflow-x: auto; margin: 0 -4px; }
+  table.standings { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 460px; }
+  .standings th { color: var(--muted); font-weight: 600; font-size: 12px; text-align: center; padding: 6px 4px; border-bottom: 1px solid var(--faint); }
+  .standings td { text-align: center; padding: 9px 4px; border-bottom: 1px solid rgba(255,255,255,.05); }
+  .standings th:nth-child(2), .standings td:nth-child(2) { text-align: left; }
+  .standings tr.leader td { color: var(--gold); }
+  .standings td b { font-size: 15px; }
+  .who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .who .logo { width: 26px; height: 26px; border-radius: 7px; font-size: 10px; }
+  .who .logo img { max-width: 22px; max-height: 22px; }
+  .who .w-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+  .who .w-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .who .w-team { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .round-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; margin: 18px 0 8px; }
+  .fixture {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 10px 12px;
+    background: rgba(0,0,0,.2); border: 1px solid var(--faint); border-radius: 14px; margin-bottom: 8px;
+  }
+  .fixture .who:last-child { flex-direction: row-reverse; text-align: right; }
+  .fixture .who:last-child .w-text { align-items: flex-end; }
+  .fixture.played { border-color: rgba(64,156,255,.35); }
+  .score { display: flex; align-items: center; gap: 6px; }
+  .score input {
+    width: 46px; padding: 8px 4px; text-align: center; border-radius: 10px; border: 1px solid var(--faint);
+    background: rgba(0,0,0,.3); color: var(--text); font: inherit; font-weight: 700; font-size: 16px; -moz-appearance: textfield;
+    transition: border .2s, box-shadow .25s;
+  }
+  .score input::-webkit-inner-spin-button, .score input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .score input:hover { box-shadow: 0 0 14px var(--glow); }
+  .score input:focus { outline: none; border-color: rgba(255,255,255,.45); }
+  .pens { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .pens .btn { padding: 6px 12px; font-size: 13px; }
+  .pens .btn.chosen { background: var(--accent-bg); border-color: var(--accent); color: #fff; }
+
+  .bracket { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; align-items: stretch; }
+  .b-round { flex: 0 0 250px; display: flex; flex-direction: column; }
+  .b-round .round-title { margin-top: 0; text-align: center; }
+  .b-matches { flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 10px; }
+  .b-match { background: rgba(0,0,0,.25); border: 1px solid var(--faint); border-radius: 14px; padding: 8px 10px; }
+  .b-match.done { border-color: rgba(64,156,255,.35); }
+  .b-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; }
+  .b-row.won .w-name { color: var(--accent-hover); }
+  .b-row.lost { opacity: .55; }
+  .b-row .tbd { color: var(--muted); font-style: italic; font-size: 14px; }
+  .b-row input { width: 40px; padding: 6px 2px; font-size: 15px; }
+  .b-match .pens { margin-top: 4px; }
+
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 1200; width: 100%; height: 100%; }
+
   @media (max-width: 520px) {
     body { padding-top: 24px; }
     h1 { font-size: 26px; }
@@ -294,6 +406,11 @@
     .side { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center; }
     .controls-section { min-width: 0; }
     .splash-card { padding: 36px 24px; }
+    .header-actions { width: 100%; justify-content: flex-end; }
+    .fixture { grid-template-columns: 1fr; text-align: center; }
+    .fixture .who, .fixture .who:last-child { justify-content: center; flex-direction: row; text-align: left; }
+    .fixture .who:last-child .w-text { align-items: flex-start; }
+    .score { justify-content: center; }
   }
 </style>
 </head>
@@ -303,16 +420,20 @@
     <div class="brand">
       <span class="brand-icon liquid-glass"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="ballClip"><circle cx="12" cy="12" r="10.5"/></clipPath><radialGradient id="ballShade" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#c9d1cc"/></radialGradient></defs><circle cx="12" cy="12" r="10.5" fill="url(#ballShade)"/><g clip-path="url(#ballClip)" fill="#1b2b20" stroke="#1b2b20" stroke-width=".7" stroke-linejoin="round"><polygon points="12.00,8.70 15.14,10.98 13.94,14.67 10.06,14.67 8.86,10.98"/><line x1="12.00" y1="8.70" x2="12.00" y2="3.80"/><line x1="15.14" y1="10.98" x2="19.80" y2="9.47"/><line x1="13.94" y1="14.67" x2="16.82" y2="18.63"/><line x1="10.06" y1="14.67" x2="7.18" y2="18.63"/><line x1="8.86" y1="10.98" x2="4.20" y2="9.47"/><polygon points="12.00,4.50 9.72,2.84 10.59,0.16 13.41,0.16 14.28,2.84"/><polygon points="19.13,9.68 20.00,7.00 22.83,7.00 23.70,9.68 21.42,11.34"/><polygon points="16.41,18.07 19.23,18.07 20.10,20.75 17.82,22.41 15.54,20.75"/><polygon points="7.59,18.07 8.46,20.75 6.18,22.41 3.90,20.75 4.77,18.07"/><polygon points="4.87,9.68 2.58,11.34 0.30,9.68 1.17,7.00 4.00,7.00"/></g><circle cx="12" cy="12" r="10.5" fill="none" stroke="rgba(0,0,0,.3)" stroke-width=".5"/></svg></span>
       <div>
-        <h1>FC 26 Team Picker</h1>
-        <p class="sub">Add everyone playing, then randomise teams or spin the wheel.</p>
+        <h1 id="appTitle">FC Team Picker</h1>
+        <p class="sub">Add everyone playing, then randomise teams, spin the wheel or run a tournament.</p>
       </div>
     </div>
-    <button class="icon-btn liquid-glass" id="muteBtn" title="Sound on" aria-label="Toggle sound">🔊</button>
+    <div class="header-actions">
+      <select id="versionSel" aria-label="Game version"></select>
+      <button class="icon-btn liquid-glass" id="muteBtn" title="Sound on" aria-label="Toggle sound">🔊</button>
+    </div>
   </header>
 
   <div class="tabs liquid-glass" role="tablist">
     <button class="tab" role="tab" id="tabBtn-picker" aria-controls="tab-picker" aria-selected="true">Team Picker</button>
     <button class="tab" role="tab" id="tabBtn-wheel" aria-controls="tab-wheel" aria-selected="false">Spin the Wheel</button>
+    <button class="tab" role="tab" id="tabBtn-tour" aria-controls="tab-tour" aria-selected="false">Tournament</button>
   </div>
 
   <!-- ============ TEAM PICKER TAB ============ -->
@@ -325,6 +446,7 @@
         <button type="button" class="btn liquid-glass" id="clearBtn">Clear all</button>
       </form>
       <div class="chips" id="chips"></div>
+      <div class="skill-hint">Tap the dots to set each player's skill. Handicap gives the strongest teams to the lowest-skilled players.</div>
     </div>
 
     <div class="card liquid-glass">
@@ -349,21 +471,55 @@
             <option value="2">Within 2★</option>
           </select>
         </label>
+        <label class="field">Balance by team OVR
+          <select id="ovrDiff">
+            <option value="off" selected>Off</option>
+            <option value="6">Within 6 OVR</option>
+            <option value="4">Within 4 OVR</option>
+            <option value="2">Within 2 OVR</option>
+            <option value="1">Within 1 OVR</option>
+            <option value="0">Identical OVR</option>
+          </select>
+        </label>
         <label class="field">League <select id="leagueSel"><option value="all">Any league</option></select></label>
         <label class="toggle-row">
           <span class="switch"><input type="checkbox" id="allowDupes"><span class="slider"></span></span>
           Allow duplicate teams
         </label>
+        <label class="toggle-row">
+          <span class="switch"><input type="checkbox" id="handicap"><span class="slider"></span></span>
+          Handicap: weaker players get stronger teams
+        </label>
       </div>
       <div class="count" id="poolCount"></div>
     </div>
 
-    <button class="btn primary big liquid-glass" id="spinBtn">🎲 Randomise teams</button>
+    <button class="btn primary big liquid-glass" id="spinBtn">🎲 Randomise teams <span class="count" style="margin:0 0 0 6px;font-size:13px;color:inherit;opacity:.7">(Space)</span></button>
 
     <div class="card liquid-glass">
-      <h2>Results</h2>
+      <div class="card-head">
+        <h2>Results</h2>
+        <button class="btn small liquid-glass" id="toTour" hidden>🏆 Start a tournament with these</button>
+      </div>
       <div class="results" id="results"><p class="empty">No teams picked yet.</p></div>
     </div>
+
+    <details class="card liquid-glass browse" id="browse">
+      <summary><h2>Browse teams <span id="bCount" style="text-transform:none;letter-spacing:0;font-weight:500"></span></h2><svg viewBox="0 0 12 12" width="14" height="14" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+      <div class="browse-tools">
+        <input type="text" id="bSearch" placeholder="Search team or league" autocomplete="off" aria-label="Search teams">
+        <select id="bSort" aria-label="Sort teams">
+          <option value="ovr">Sort: OVR</option>
+          <option value="att">Sort: Attack</option>
+          <option value="mid">Sort: Midfield</option>
+          <option value="def">Sort: Defence</option>
+          <option value="name">Sort: Name</option>
+        </select>
+      </div>
+      <div class="count" style="margin:-4px 0 12px">Shows teams matching the options above. Click a team to give it to a player.</div>
+      <div class="team-grid" id="bGrid"></div>
+      <button class="btn small liquid-glass show-more" id="bMore" hidden>Show more</button>
+    </details>
   </section>
 
   <!-- ============ SPIN THE WHEEL TAB ============ -->
@@ -375,7 +531,7 @@
           <canvas id="wheel" width="760" height="760" aria-label="Prize wheel"></canvas>
         </div>
         <button id="wSpin" class="btn liquid-glass">SPIN</button>
-        <div class="hint">Or grab the wheel and flick it</div>
+        <div class="hint">Press Space, or grab the wheel and flick it</div>
       </div>
 
       <div class="card controls-section liquid-glass" id="wControls">
@@ -405,6 +561,31 @@
       </div>
     </div>
   </section>
+
+  <!-- ============ TOURNAMENT TAB ============ -->
+  <section id="tab-tour" role="tabpanel" aria-labelledby="tabBtn-tour" hidden>
+    <div class="card liquid-glass" id="tourSetup">
+      <h2>New tournament</h2>
+      <div class="opts">
+        <label class="field">Format
+          <select id="tFormat">
+            <option value="league">League (everyone plays everyone)</option>
+            <option value="league2">League, home &amp; away</option>
+            <option value="knockout">Knockout</option>
+          </select>
+        </label>
+        <label class="field">Entrants
+          <select id="tFrom">
+            <option value="draw">Players with their drawn teams</option>
+            <option value="players">Players only (no teams)</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn primary liquid-glass" id="tStart" style="margin-top:18px">🏆 Start tournament</button>
+      <div class="count" id="tSetupNote"></div>
+    </div>
+    <div id="tourView"></div>
+  </section>
 </div>
 
 <div id="splash" role="dialog" aria-modal="true" aria-labelledby="splashWinner">
@@ -417,729 +598,13 @@
 </div>
 
 <div id="toast" class="liquid-glass" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<!-- Team data (built by tools/build_data.py). Each file registers itself in window.FC_DATA. -->
+<script src="data/fc26.js"></script>
+<script src="data/fc27.js" onerror="this.remove()"></script>
 
 <script>
-// Team ratings: FC 26 OVR/ATT/MID/DEF from fifaindex.com, star ratings from
-// fifagamenews.com/fc-26-team-star-ratings (both scraped Oct 2026).
-const TEAMS = [
-  // [name, league, OVR, ATT, MID, DEF, stars (null = not listed, approximated from OVR), FIFA Index team id]
-  ["FC Barcelona","LALIGA",85,87,85,83,5.0,241],
-  ["Paris Saint-Germain","Ligue 1",85,85,86,86,5.0,73],
-  ["Real Madrid","LALIGA",85,90,84,82,5.0,243],
-  ["Arsenal","Premier League",84,86,85,84,5.0,1],
-  ["Bayern München","Bundesliga",84,90,85,83,5.0,21],
-  ["Liverpool","Premier League",84,87,84,83,5.0,9],
-  ["Manchester City","Premier League",84,87,84,82,5.0,10],
-  ["Inter","Serie A",83,86,83,83,5.0,131682],
-  ["Atlético de Madrid","LALIGA",82,84,82,81,4.5,240],
-  ["Aston Villa","Premier League",81,82,81,80,4.5,2],
-  ["Borussia Dortmund","Bundesliga",81,82,80,81,4.5,22],
-  ["Chelsea","Premier League",81,82,84,79,4.5,5],
-  ["Milano FC","Serie A",81,82,82,78,4.5,131681],
-  ["Napoli","Serie A",81,78,81,80,4.5,48],
-  ["Newcastle United","Premier League",81,79,84,80,4.5,13],
-  ["Athletic Club de Bilbao","LALIGA",80,79,81,79,4.5,448],
-  ["Juventus","Serie A",80,81,80,81,4.5,45],
-  ["Manchester United","Premier League",80,82,82,79,4.5,11],
-  ["Roma","Serie A",80,80,80,80,4.5,52],
-  ["Tottenham Hotspur","Premier League",80,79,80,80,4.5,18],
-  ["Atalanta","Serie A",79,77,78,78,4.5,115845],
-  ["Bayer 04 Leverkusen","Bundesliga",79,80,80,78,4.5,32],
-  ["Crystal Palace","Premier League",79,79,78,79,4.0,1799],
-  ["Galatasaray","Turkey Süper Lig",79,81,80,78,4.5,325],
-  ["Nottingham Forest","Premier League",79,79,78,80,4.5,14],
-  ["Olympique de Marseille","Ligue 1",79,80,79,79,4.0,219],
-  ["RB Leipzig","Bundesliga",79,78,78,79,4.5,112172],
-  ["Real Betis Balompié","LALIGA",79,80,80,77,4.0,449],
-  ["Sporting CP","Portugal Primeira Liga",79,78,80,78,4.5,237],
-  ["Villarreal CF","LALIGA",79,80,80,77,4.0,483],
-  ["AFC Bournemouth","Premier League",78,79,78,77,4.0,1943],
-  ["AS Monaco","Ligue 1",78,78,77,77,4.0,69],
-  ["Al Hilal","Saudi Pro League",78,78,79,75,4.0,605],
-  ["Benfica","Portugal Primeira Liga",78,80,78,77,4.0,234],
-  ["Brentford","Premier League",78,81,78,77,4.0,1925],
-  ["Brighton & Hove Albion","Premier League",78,80,79,78,4.0,1808],
-  ["Everton","Premier League",78,76,78,77,4.0,7],
-  ["FC Porto","Portugal Primeira Liga",78,72,78,79,4.0,236],
-  ["Fenerbahçe","Turkey Süper Lig",78,72,79,77,4.0,326],
-  ["Fulham","Premier League",78,78,78,78,4.0,144],
-  ["Lazio","Serie A",78,77,77,78,4.5,115841],
-  ["Real Sociedad","LALIGA",78,83,78,76,4.0,457],
-  ["CA Osasuna","LALIGA",77,78,77,77,4.0,479],
-  ["Como","Serie A",77,77,77,75,4.0,1745],
-  ["Eintracht Frankfurt","Bundesliga",77,82,77,79,4.0,1824],
-  ["Girona FC","LALIGA",77,76,77,76,4.0,110062],
-  ["LOSC Lille","Ligue 1",77,77,77,76,4.0,65],
-  ["Olympique Lyonnais","Ligue 1",77,76,77,77,4.0,66],
-  ["PSV","Eredivisie",77,77,78,76,4.0,247],
-  ["RC Lens","Ligue 1",77,77,78,76,3.5,64],
-  ["Rayo Vallecano","LALIGA",77,81,77,77,4.0,480],
-  ["Sunderland","Premier League",77,76,78,78,3.5,106],
-  ["TSG 1899 Hoffenheim","Bundesliga",77,77,78,75,4.0,10029],
-  ["VfB Stuttgart","Bundesliga",77,80,78,76,4.0,36],
-  ["West Ham United","Premier League",77,76,78,77,4.0,19],
-  ["Al Nassr","Saudi Pro League",76,85,77,74,4.0,112139],
-  ["Bologna","Serie A",76,77,77,74,4.0,189],
-  ["Fiorentina","Serie A",76,77,75,75,4.0,110374],
-  ["Flamengo","CONMEBOL Libertadores",76,77,76,75,null,1043],
-  ["Getafe CF","LALIGA",76,75,77,75,4.0,1860],
-  ["Leeds United","Premier League",76,76,77,76,4.0,8],
-  ["Olympiacos","Rest of World",76,78,76,75,null,280],
-  ["RC Celta de Vigo","LALIGA",76,79,75,77,4.0,450],
-  ["RCD Mallorca","LALIGA",76,75,76,77,4.0,453],
-  ["Stade Rennais","Ligue 1",76,78,76,74,4.0,74],
-  ["Valencia CF","LALIGA",76,76,75,74,4.0,461],
-  ["VfL Wolfsburg","Bundesliga",76,76,76,74,4.0,175],
-  ["1. FSV Mainz 05","Bundesliga",75,73,78,75,4.0,169],
-  ["AEK","Rest of World",75,77,75,74,null,278],
-  ["Ajax","Eredivisie",75,77,73,74,4.0,245],
-  ["Atlético Mineiro","CONMEBOL Sudamericana",75,77,75,76,null,1035],
-  ["Boca Juniors","Argentina Primera División",75,75,74,73,4.0,1877],
-  ["Borussia M'gladbach","Bundesliga",75,77,75,75,4.0,23],
-  ["Botafogo","CONMEBOL Libertadores",75,71,75,75,null,517],
-  ["Burnley","Premier League",75,75,74,75,3.5,1796],
-  ["Celtic","Scotland Premiership",75,73,75,73,4.0,78],
-  ["Feyenoord","Eredivisie",75,76,76,74,4.0,246],
-  ["OGC Nice","Ligue 1",75,74,76,74,4.0,72],
-  ["Palmeiras","CONMEBOL Libertadores",75,78,76,74,null,383],
-  ["Paris FC","Ligue 1",75,75,76,73,4.0,111817],
-  ["RC Strasbourg","Ligue 1",75,75,75,75,3.5,76],
-  ["RCD Espanyol","LALIGA",75,73,74,76,3.5,452],
-  ["SC Freiburg","Bundesliga",75,74,75,76,4.0,25],
-  ["Sevilla FC","LALIGA",75,75,75,75,4.0,481],
-  ["Slavia Praha","Rest of World",75,75,75,74,null,266],
-  ["Sporting de Braga","Portugal Primeira Liga",75,76,76,73,4.0,1896],
-  ["Torino","Serie A",75,78,73,74,4.0,54],
-  ["Werder Bremen","Bundesliga",75,73,76,74,4.0,38],
-  ["Wolverhampton Wanderers","Premier League",75,74,75,74,4.0,110],
-  ["1. FC Köln","Bundesliga",74,75,74,71,3.5,31],
-  ["1. FC Union Berlin","Bundesliga",74,74,74,76,3.5,1831],
-  ["Al Ahli","Saudi Pro League",74,77,74,73,3.5,112387],
-  ["Al Ittihad","Saudi Pro League",74,76,76,72,4.0,607],
-  ["Al Qadsiah","Saudi Pro League",74,76,76,71,3.5,112391],
-  ["Beşiktaş","Turkey Süper Lig",74,73,75,74,4.0,327],
-  ["Club Brugge","Belgium Pro League",74,72,76,74,3.5,231],
-  ["Deportivo Alavés","LALIGA",74,77,73,74,3.5,463],
-  ["Elche CF","LALIGA",74,74,73,74,3.0,468],
-  ["FC Augsburg","Bundesliga",74,75,74,75,4.0,100409],
-  ["Hamburger SV","Bundesliga",74,72,73,74,3.5,28],
-  ["Internacional","CONMEBOL Libertadores",74,71,73,75,null,1048],
-  ["Levante UD","LALIGA",74,74,73,74,3.5,1853],
-  ["PAOK","Rest of World",74,76,76,73,null,393],
-  ["RB Bragantino","CONMEBOL Sudamericana",74,71,75,75,null,112472],
-  ["Racing Club de Avellaneda","Argentina Primera División",74,78,72,73,3.5,101085],
-  ["Rangers","Scotland Premiership",74,73,73,73,3.5,86],
-  ["River Plate","Argentina Primera División",74,74,74,74,4.0,1876],
-  ["Santos","CONMEBOL Sudamericana",74,74,72,75,null,1053],
-  ["Sassuolo","Serie A",74,77,75,73,3.5,111974],
-  ["Stade Brestois 29","Ligue 1",74,75,74,74,3.5,378],
-  ["Union Saint-Gilloise","Belgium Pro League",74,73,74,75,3.5,2014],
-  ["AZ","Eredivisie",73,75,73,71,3.5,1906],
-  ["Cagliari","Serie A",73,72,72,73,3.5,1842],
-  ["Corinthians","CONMEBOL Sudamericana",73,75,72,74,null,1041],
-  ["Coventry City","England Championship",73,73,73,72,3.5,1800],
-  ["Cremonese","Serie A",73,74,71,72,3.5,111434],
-  ["Estudiantes de La Plata","Argentina Primera División",73,76,73,73,3.5,101083],
-  ["FC Lorient","Ligue 1",73,72,73,72,3.5,217],
-  ["Genk","Belgium Pro League",73,71,73,74,3.5,673],
-  ["Genoa","Serie A",73,73,72,73,3.5,110556],
-  ["Hellas Verona","Serie A",73,70,73,71,3.5,206],
-  ["Ipswich Town","England Championship",73,69,73,74,3.5,94],
-  ["Panathinaikos","Rest of World",73,73,73,73,null,1884],
-  ["Parma","Serie A",73,72,73,71,3.5,50],
-  ["Real Oviedo","LALIGA",73,74,72,73,3.5,110827],
-  ["Rosario Central","Argentina Primera División",73,72,74,70,3.5,110580],
-  ["Sparta Praha","Rest of World",73,74,73,72,null,267],
-  ["São Paulo","CONMEBOL Libertadores",73,73,72,73,null,598],
-  ["Toulouse FC","Ligue 1",73,73,73,73,3.5,1809],
-  ["Trabzonspor","Turkey Süper Lig",73,77,72,73,3.5,436],
-  ["Udinese","Serie A",73,73,73,73,3.5,55],
-  ["Vélez Sarsfield","Argentina Primera División",73,73,71,73,3.5,101088],
-  ["1. FC Heidenheim","Bundesliga",72,72,72,72,3.5,111235],
-  ["AJ Auxerre","Ligue 1",72,70,73,71,3.5,57],
-  ["Anderlecht","Belgium Pro League",72,74,71,71,3.5,229],
-  ["Angers SCO","Ligue 1",72,71,73,70,3.5,1530],
-  ["Argentinos Juniors","Argentina Primera División",72,71,73,71,3.5,111019],
-  ["Atlético Nacional","CONMEBOL Libertadores",72,77,70,71,null,101100],
-  ["Bahia","CONMEBOL Libertadores",72,74,72,72,null,1598],
-  ["Birmingham City","England Championship",72,72,72,73,3.5,88],
-  ["Cruzeiro","CONMEBOL Sudamericana",72,75,71,73,null,568],
-  ["Dinamo Zagreb","Rest of World",72,71,74,71,null,211],
-  ["Dynamo Kyiv","Rest of World",72,69,73,71,null,101047],
-  ["FC Midtjylland","Denmark Superliga",72,72,71,72,3.5,1516],
-  ["FC Nantes","Ligue 1",72,71,72,72,3.5,71],
-  ["FC St. Pauli","Bundesliga",72,71,72,72,3.5,110329],
-  ["FC Utrecht","Eredivisie",72,71,71,71,3.5,1903],
-  ["Fluminense","CONMEBOL Sudamericana",72,74,72,72,null,567],
-  ["Grêmio","CONMEBOL Sudamericana",72,72,71,72,null,1629],
-  ["Inter Miami","USA Major League Soccer",72,80,72,69,3.5,112893],
-  ["Lanús","Argentina Primera División",72,71,72,70,3.5,110395],
-  ["Le Havre AC","Ligue 1",72,71,72,72,3.5,1738],
-  ["Middlesbrough","England Championship",72,70,72,72,3.5,12],
-  ["Monza","Italy Serie B",72,72,73,68,3.5,111811],
-  ["N.E.C. Nijmegen","Eredivisie",72,71,71,71,3.0,1910],
-  ["Palermo","Italy Serie B",72,73,72,72,3.5,1843],
-  ["Peñarol","CONMEBOL Libertadores",72,73,72,70,null,101110],
-  ["Pisa","Serie A",72,70,72,71,3.0,110738],
-  ["Shakhtar Donetsk","Rest of World",72,71,73,73,null,101059],
-  ["Southampton","England Championship",72,74,72,72,3.5,17],
-  ["UD Almería","Spain Segunda División",72,72,72,72,3.5,1861],
-  ["UD Las Palmas","Spain Segunda División",72,72,71,72,3.5,472],
-  ["Viktoria Plzeň","Rest of World",72,71,72,72,null,110468],
-  ["BSC Young Boys","Switzerland Super League",71,71,72,69,3.5,900],
-  ["Belgrano de Córdoba","Argentina Primera División",71,73,73,71,3.5,111022],
-  ["Bristol City","England Championship",71,71,71,70,3.5,1919],
-  ["Charlotte FC","USA Major League Soccer",71,68,72,68,3.0,114640],
-  ["FC Basel","Switzerland Super League",71,68,71,70,3.5,896],
-  ["FC København","Denmark Superliga",71,73,71,71,3.5,819],
-  ["FC Metz","Ligue 1",71,71,72,70,3.0,68],
-  ["FC Schalke 04","Germany 2. Bundesliga",71,75,70,70,2.5,34],
-  ["FC Twente","Eredivisie",71,71,70,70,3.5,1908],
-  ["FK Bodø/Glimt","Norway Eliteserien",71,73,72,70,3.0,918],
-  ["Famalicão","Portugal Primeira Liga",71,69,71,71,3.0,112809],
-  ["Ferencvárosi TC","Rest of World",71,70,71,68,null,1874],
-  ["Fortaleza","CONMEBOL Libertadores",71,71,71,71,null,111052],
-  ["Heart of Midlothian","Scotland Premiership",71,72,72,70,2.5,80],
-  ["Hull City","England Championship",71,74,71,71,3.0,1952],
-  ["Independiente","Argentina Primera División",71,71,70,72,3.5,110093],
-  ["Lecce","Serie A",71,71,71,70,3.5,347],
-  ["Leicester City","England Championship",71,68,72,70,3.5,95],
-  ["Los Angeles FC","USA Major League Soccer",71,77,71,70,3.0,112996],
-  ["Millwall","England Championship",71,69,72,72,3.0,97],
-  ["Nacional","CONMEBOL Libertadores",71,73,69,72,2.5,111325],
-  ["RC Deportivo","Spain Segunda División",71,70,72,71,3.0,242],
-  ["Samsunspor","Turkey Süper Lig",71,70,71,70,3.5,748],
-  ["Sheffield United","England Championship",71,71,72,71,3.5,1794],
-  ["Swansea City","England Championship",71,72,70,72,3.0,1960],
-  ["Talleres de Córdoba","Argentina Primera División",71,69,71,69,3.5,112670],
-  ["Vancouver Whitecaps","USA Major League Soccer",71,73,73,67,3.0,101112],
-  ["Venezia","Italy Serie B",71,71,72,69,3.5,205],
-  ["İstanbul Başakşehir FK","Turkey Süper Lig",71,70,72,71,3.5,101014],
-  ["AGF","Denmark Superliga",70,71,70,71,3.0,271],
-  ["AS Saint-Étienne","France Ligue 2",70,75,70,69,3.0,1819],
-  ["Alianza Lima","CONMEBOL Libertadores",70,70,69,68,null,111010],
-  ["América de Cali","CONMEBOL Sudamericana",70,71,70,69,null,101099],
-  ["Antwerp","Belgium Pro League",70,71,69,70,3.0,230],
-  ["Atlanta United FC","USA Major League Soccer",70,70,72,68,3.0,112885],
-  ["Casa Pia","Portugal Primeira Liga",70,69,68,68,3.0,114510],
-  ["Cerro Porteño","CONMEBOL Libertadores",70,72,68,71,null,112716],
-  ["Chicago Fire FC","USA Major League Soccer",70,76,69,67,3.0,693],
-  ["Columbus Crew","USA Major League Soccer",70,71,70,68,3.0,687],
-  ["Defensa y Justicia","Argentina Primera División",70,69,69,69,3.0,111710],
-  ["Derby County","England Championship",70,74,70,69,3.0,91],
-  ["Estoril","Portugal Primeira Liga",70,71,71,69,3.0,10020],
-  ["FC Lugano","Switzerland Super League",70,71,70,69,3.0,10032],
-  ["Gent","Belgium Pro League",70,70,71,70,3.0,674],
-  ["Gil Vicente FC","Portugal Primeira Liga",70,68,69,69,3.0,1888],
-  ["Hajduk Split","Rest of World",70,71,70,69,null,263],
-  ["Hannover 96","Germany 2. Bundesliga",70,70,71,69,3.0,485],
-  ["Hertha BSC","Germany 2. Bundesliga",70,71,70,69,3.0,166],
-  ["Houston Dynamo","USA Major League Soccer",70,73,71,69,2.5,698],
-  ["Huracán","Argentina Primera División",70,64,69,70,3.5,111711],
-  ["Independiente Medellín","CONMEBOL Libertadores",70,71,69,70,null,101103],
-  ["Independiente Rivadavia","Argentina Primera División",70,75,70,70,3.0,111020],
-  ["Independiente Santa Fe","CONMEBOL Libertadores",70,73,70,69,null,101104],
-  ["Independiente del Valle","CONMEBOL Libertadores",70,70,68,68,null,112908],
-  ["Junior de Barranquilla","CONMEBOL Libertadores",70,72,70,69,null,101101],
-  ["LDU Quito","CONMEBOL Libertadores",70,69,69,70,null,110986],
-  ["Lech Poznań","Poland Ekstraklasa",70,74,69,68,3.0,873],
-  ["Los Angeles Galaxy","USA Major League Soccer",70,72,70,68,3.0,697],
-  ["Millonarios","CONMEBOL Sudamericana",70,71,70,68,null,101105],
-  ["Mirassol","CONMEBOL Libertadores",70,71,69,71,null,111975],
-  ["NEOM SC","Saudi Pro League",70,71,71,68,3.0,131798],
-  ["Norwich City","England Championship",70,70,70,69,3.5,1792],
-  ["Olimpia Asunción","CONMEBOL Libertadores",70,70,70,69,null,101108],
-  ["Platense","Argentina Primera División",70,71,68,69,3.0,112689],
-  ["Preston North End","England Championship",70,70,72,69,3.0,1801],
-  ["Queens Park Rangers","England Championship",70,67,70,70,3.0,15],
-  ["Racing de Santander","Spain Segunda División",70,71,71,68,3.0,456],
-  ["Real Sporting de Gijón","Spain Segunda División",70,74,71,70,3.0,459],
-  ["SV Darmstadt 98","Germany 2. Bundesliga",70,72,70,69,3.0,110502],
-  ["Sampdoria","Italy Serie B",70,73,70,69,3.0,1837],
-  ["San Lorenzo de Almagro","Argentina Primera División",70,70,68,62,3.0,1013],
-  ["Seattle Sounders","USA Major League Soccer",70,73,70,68,3.5,111144],
-  ["Standard Liège","Belgium Pro League",70,70,69,69,3.0,232],
-  ["Stoke City","England Championship",70,68,70,70,3.0,1806],
-  ["Universidad de Chile","CONMEBOL Libertadores",70,71,69,70,null,15029],
-  ["Universitario de Deportes","CONMEBOL Libertadores",70,70,70,71,null,111014],
-  ["Vasco da Gama","CONMEBOL Sudamericana",70,70,69,70,null,569],
-  ["Watford","England Championship",70,68,71,69,3.0,1795],
-  ["West Bromwich Albion","England Championship",70,70,70,69,3.0,109],
-  ["Wrexham","England Championship",70,70,71,70,3.0,1947],
-  ["1. FC Kaiserslautern","Germany 2. Bundesliga",69,70,70,69,3.0,29],
-  ["APOEL Nicosia FC","Rest of World",69,67,70,68,null,100135],
-  ["Al Ain FC (UAE)","Rest of World",69,77,70,67,null,111701],
-  ["Al Khaleej","Saudi Pro League",69,79,69,66,2.0,112883],
-  ["Al Shabab","Saudi Pro League",69,77,70,65,2.0,111674],
-  ["Al Taawoun","Saudi Pro League",69,70,71,64,3.0,112393],
-  ["Arouca","Portugal Primeira Liga",69,67,69,69,3.0,112513],
-  ["Atlético Bucaramanga","CONMEBOL Libertadores",69,70,69,69,null,112992],
-  ["Atlético Tucumán","Argentina Primera División",69,74,68,69,3.0,111708],
-  ["Austin FC","USA Major League Soccer",69,69,68,67,3.0,114161],
-  ["Barcelona SC Guayaquil","CONMEBOL Libertadores",69,70,67,69,null,110981],
-  ["Barracas Central","Argentina Primera División",69,69,69,67,3.0,113044],
-  ["Blackburn Rovers","England Championship",69,69,69,67,3.0,3],
-  ["Brøndby IF","Denmark Superliga",69,66,70,69,2.5,269],
-  ["Burgos CF","Spain Segunda División",69,69,69,68,2.5,10846],
-  ["CD Castellón","Spain Segunda División",69,69,70,68,2.5,100852],
-  ["CD Leganés","Spain Segunda División",69,68,69,68,3.0,100888],
-  ["Charleroi","Belgium Pro League",69,69,70,69,3.0,670],
-  ["Charlton Athletic","England Championship",69,67,69,69,2.5,89],
-  ["Córdoba CF","Spain Segunda División",69,70,69,68,3.0,1867],
-  ["Deportes Tolima","CONMEBOL Libertadores",69,69,69,69,null,111722],
-  ["EC Vitória","CONMEBOL Sudamericana",69,68,70,70,null,1719],
-  ["Empoli","Italy Serie B",69,68,69,68,2.5,1746],
-  ["FC Cincinnati","USA Major League Soccer",69,76,68,68,3.5,113149],
-  ["Fortuna Düsseldorf","Germany 2. Bundesliga",69,70,69,68,3.0,110636],
-  ["Gaziantep FK","Turkey Süper Lig",69,72,68,67,3.0,110776],
-  ["Go Ahead Eagles","Eredivisie",69,68,69,68,3.0,100632],
-  ["Granada CF","Spain Segunda División",69,69,69,69,2.5,110832],
-  ["Göztepe","Turkey Süper Lig",69,69,69,68,2.5,101026],
-  ["Holstein Kiel","Germany 2. Bundesliga",69,68,68,69,3.0,576],
-  ["Instituto de Córdoba","Argentina Primera División",69,69,68,68,null,110953],
-  ["Jagiellonia Białystok","Poland Ekstraklasa",69,70,69,69,2.5,110745],
-  ["Jeonbuk Hyundai Motors","Korea K League 1",69,69,69,67,2.5,1477],
-  ["KV Mechelen","Belgium Pro League",69,70,69,68,3.0,110724],
-  ["Karlsruher SC","Germany 2. Bundesliga",69,68,69,69,2.5,1832],
-  ["Kasımpaşa","Turkey Süper Lig",69,69,69,67,2.5,111339],
-  ["Kocaelispor","Turkey Süper Lig",69,71,67,70,2.5,101032],
-  ["Konyaspor","Turkey Süper Lig",69,69,69,69,3.0,101033],
-  ["LASK","Austria Bundesliga",69,70,68,69,2.5,252],
-  ["Libertad","CONMEBOL Libertadores",69,73,68,69,null,111008],
-  ["Minnesota United FC","USA Major League Soccer",69,71,70,68,3.0,111138],
-  ["Modena","Italy Serie B",69,68,69,70,3.0,1744],
-  ["Málaga CF","Spain Segunda División",69,71,69,67,2.5,573],
-  ["Nashville SC","USA Major League Soccer",69,70,69,68,3.0,114162],
-  ["New England Revolution","USA Major League Soccer",69,69,70,66,3.0,691],
-  ["New York City FC","USA Major League Soccer",69,72,70,66,2.5,112828],
-  ["OH Leuven","Belgium Pro League",69,67,69,70,3.0,100087],
-  ["Once Caldas","CONMEBOL Sudamericana",69,71,69,67,null,101106],
-  ["Orlando City SC","USA Major League Soccer",69,68,70,68,3.0,112606],
-  ["Oxford United","England Championship",69,67,68,69,3.0,1951],
-  ["Portsmouth","England Championship",69,70,69,68,2.5,1790],
-  ["Qarabağ FK","Rest of World",69,68,70,69,null,113888],
-  ["RB Salzburg","Austria Bundesliga",69,69,70,68,3.5,191],
-  ["Raków Częstochowa","Poland Ekstraklasa",69,71,69,69,3.0,114326],
-  ["Real Salt Lake","USA Major League Soccer",69,65,68,68,2.5,111065],
-  ["Real Valladolid","Spain Segunda División",69,68,69,69,null,462],
-  ["Real Zaragoza","Spain Segunda División",69,69,67,69,3.0,244],
-  ["Rio Ave","Portugal Primeira Liga",69,65,68,69,3.0,744],
-  ["SD Eibar","Spain Segunda División",69,69,68,68,3.0,467],
-  ["SK Rapid","Austria Bundesliga",69,68,69,69,3.0,254],
-  ["Santa Clara","Portugal Primeira Liga",69,70,68,69,3.0,1438],
-  ["Servette FC","Switzerland Super League",69,69,69,68,3.0,324],
-  ["Sint-Truiden","Belgium Pro League",69,64,70,68,2.5,680],
-  ["Sporting Cristal","CONMEBOL Libertadores",69,69,69,69,null,111013],
-  ["Stade de Reims","France Ligue 2",69,68,68,68,3.5,379],
-  ["Tigre","Argentina Primera División",69,69,69,66,2.5,111715],
-  ["Toronto FC","USA Major League Soccer",69,73,70,67,2.5,111651],
-  ["Universidad Católica","Rest of World",69,71,68,68,null,110975],
-  ["Unión de Santa Fe","Argentina Primera División",69,68,70,69,3.0,111716],
-  ["VfL Bochum","Germany 2. Bundesliga",69,69,69,70,3.5,160],
-  ["Viking FK","Norway Eliteserien",69,69,69,69,2.5,300],
-  ["Vitória de Guimarães","Portugal Primeira Liga",69,70,67,69,3.5,1887],
-  ["Widzew Łódź","Poland Ekstraklasa",69,69,69,69,2.5,301],
-  ["1. FC Magdeburg","Germany 2. Bundesliga",68,70,68,68,2.5,110588],
-  ["1. FC Nürnberg","Germany 2. Bundesliga",68,68,69,68,2.5,171],
-  ["Aberdeen","Scotland Premiership",68,66,69,63,2.5,77],
-  ["Al Ettifaq","Saudi Pro League",68,69,70,66,3.0,112096],
-  ["Albacete Balompié","Spain Segunda División",68,68,68,68,2.5,1854],
-  ["Aldosivi","Argentina Primera División",68,68,65,67,2.5,111707],
-  ["Alverca","Portugal Primeira Liga",68,70,66,68,2.0,717],
-  ["Antalyaspor","Turkey Süper Lig",68,69,68,68,2.5,741],
-  ["Arminia Bielefeld","Germany 2. Bundesliga",68,67,68,68,2.0,159],
-  ["Avellino","Italy Serie B",68,69,67,67,null,2038],
-  ["Banfield","Argentina Primera División",68,68,67,67,3.0,110404],
-  ["Bari","Italy Serie B",68,68,69,67,2.5,1848],
-  ["Bolívar","CONMEBOL Libertadores",68,68,68,66,null,110968],
-  ["Buriram United","Rest of World",68,71,70,67,null,112638],
-  ["Cardiff City","England League One",68,66,67,68,2.5,1961],
-  ["Carrarese","Italy Serie B",68,68,68,67,2.5,112493],
-  ["Catanzaro","Italy Serie B",68,69,68,66,2.5,110908],
-  ["Cesena","Italy Serie B",68,67,70,67,2.0,110915],
-  ["Colorado Rapids","USA Major League Soccer",68,71,68,67,2.5,694],
-  ["Corendon Alanyaspor","Turkey Süper Lig",68,69,68,68,3.0,113142],
-  ["Cultural Leonesa","Spain Segunda División",68,66,67,67,2.0,15012],
-  ["Cusco FC","CONMEBOL Libertadores",68,69,68,67,null,112659],
-  ["Cádiz CF","Spain Segunda División",68,68,68,67,3.0,1968],
-  ["Daejeon Hana Citizen","Korea K League 1",68,68,68,68,2.5,980],
-  ["Dender","Belgium Pro League",68,68,67,67,2.5,537],
-  ["Estrela da Amadora","Portugal Primeira Liga",68,68,65,66,2.5,718],
-  ["FC Nordsjælland","Denmark Superliga",68,68,69,67,2.5,1788],
-  ["FC Rapid","Romania Liga I",68,66,69,68,2.5,310],
-  ["FC Seoul","Korea K League 1",68,71,65,70,2.5,982],
-  ["FC St. Gallen","Switzerland Super League",68,65,68,67,3.0,898],
-  ["FCSB","Romania Liga I",68,69,71,66,3.0,100761],
-  ["Fortuna Sittard","Eredivisie",68,68,68,67,2.5,634],
-  ["Frosinone","Italy Serie B",68,69,69,68,2.0,111657],
-  ["Gimnasia y Esgrima La Plata","Argentina Primera División",68,66,67,68,3.0,101084],
-  ["Górnik Zabrze","Poland Ekstraklasa",68,66,69,68,2.5,420],
-  ["Hammarby IF","Sweden Allsvenskan",68,68,69,68,2.5,708],
-  ["Hibernian","Scotland Premiership",68,67,68,67,2.5,81],
-  ["Kayserispor","Turkey Süper Lig",68,69,69,67,2.0,101020],
-  ["Legia Warszawa","Poland Ekstraklasa",68,67,69,68,3.0,1871],
-  ["Luton Town","England League One",68,68,67,68,3.0,1923],
-  ["Malmö FF","Sweden Allsvenskan",68,69,65,68,3.0,320],
-  ["Melgar FBC","CONMEBOL Sudamericana",68,70,66,67,null,111334],
-  ["Montpellier HSC","France Ligue 2",68,70,67,69,3.5,70],
-  ["Moreirense","Portugal Primeira Liga",68,65,68,68,2.5,1900],
-  ["Nacional da Madeira","Portugal Primeira Liga",68,69,68,68,null,1891],
-  ["Newell's Old Boys","Argentina Primera División",68,69,65,66,3.5,110396],
-  ["Padova","Italy Serie B",68,69,68,66,2.5,110912],
-  ["Pescara","Italy Serie B",68,65,69,67,2.0,200],
-  ["Pogoń Szczecin","Poland Ekstraklasa",68,68,68,67,2.5,110746],
-  ["Portland Timbers","USA Major League Soccer",68,68,69,68,3.0,111140],
-  ["Randers FC","Denmark Superliga",68,64,68,68,2.5,1786],
-  ["Rosenborg BK","Norway Eliteserien",68,64,69,67,2.5,298],
-  ["SC Paderborn 07","Germany 2. Bundesliga",68,66,69,69,2.5,10030],
-  ["SK Brann","Norway Eliteserien",68,68,68,68,2.5,919],
-  ["SV Elversberg","Germany 2. Bundesliga",68,65,69,68,2.5,580],
-  ["San Diego FC","USA Major League Soccer",68,73,68,62,3.0,131439],
-  ["Sarmiento","Argentina Primera División",68,70,67,67,3.5,112713],
-  ["Sparta Rotterdam","Eredivisie",68,73,67,67,2.5,100646],
-  ["Spezia","Italy Serie B",68,68,67,68,3.0,113974],
-  ["St. Louis City SC","USA Major League Soccer",68,64,69,65,3.0,113018],
-  ["Sturm Graz","Austria Bundesliga",68,67,69,68,3.0,209],
-  ["Südtirol","Italy Serie B",68,67,69,68,2.5,112494],
-  ["Tondela","Portugal Primeira Liga",68,72,66,67,2.5,112516],
-  ["Ulsan HD FC","Korea K League 1",68,68,69,65,3.0,1473],
-  ["Universidad Católica del Ecuador","CONMEBOL Sudamericana",68,70,67,68,null,114581],
-  ["Universitatea Cluj","Romania Liga I",68,70,67,68,2.5,110751],
-  ["Universitatea Craiova","Romania Liga I",68,67,68,69,2.5,308],
-  ["Westerlo","Belgium Pro League",68,67,69,68,3.0,681],
-  ["Zulte Waregem","Belgium Pro League",68,68,69,66,2.0,15005],
-  ["sc Heerenveen","Eredivisie",68,67,69,67,2.5,1913],
-  ["Çaykur Rizespor","Turkey Süper Lig",68,69,67,68,3.0,101037],
-  ["AD Ceuta","Spain Segunda División",67,67,67,67,2.0,1894],
-  ["AVS Futebol SAD","Portugal Primeira Liga",67,67,66,68,2.5,131463],
-  ["Amiens SC","France Ligue 2",67,65,66,64,1.5,1816],
-  ["Audax Italiano","CONMEBOL Sudamericana",67,68,67,67,null,101097],
-  ["Austria Wien","Austria Bundesliga",67,68,66,68,3.0,256],
-  ["BK Häcken","Sweden Allsvenskan",67,61,68,66,2.5,711],
-  ["Blau-Weiß Linz","Austria Bundesliga",67,68,66,65,2.0,110720],
-  ["Bolton Wanderers","England League One",67,66,67,66,2.0,4],
-  ["CD Mirandés","Spain Segunda División",67,67,66,66,1.5,110069],
-  ["CFR Cluj","Romania Liga I",67,66,68,66,2.5,114385],
-  ["Cercle Brugge","Belgium Pro League",67,69,66,67,2.5,1750],
-  ["Cerro Largo","CONMEBOL Sudamericana",67,68,67,67,null,115536],
-  ["Cracovia","Poland Ekstraklasa",67,67,68,68,2.5,110747],
-  ["D.C. United","USA Major League Soccer",67,71,65,67,2.5,688],
-  ["Deportes Iquique","CONMEBOL Sudamericana",67,68,67,69,null,112531],
-  ["Dinamo București","Romania Liga I",67,67,69,68,2.5,100757],
-  ["Djurgårdens IF","Sweden Allsvenskan",67,65,67,65,2.5,710],
-  ["Dynamo Dresden","Germany 2. Bundesliga",67,68,67,67,2.5,503],
-  ["ESTAC Troyes","France Ligue 2",67,67,67,66,2.0,294],
-  ["Eintracht Braunschweig","Germany 2. Bundesliga",67,67,67,67,2.5,110500],
-  ["En Avant Guingamp","France Ligue 2",67,66,66,67,2.5,62],
-  ["Entella","Italy Serie B",67,66,67,66,2.0,113147],
-  ["FC Andorra","Spain Segunda División",67,67,66,67,2.0,114554],
-  ["FC Dallas","USA Major League Soccer",67,71,68,65,2.5,695],
-  ["FC Groningen","Eredivisie",67,68,66,68,2.0,1915],
-  ["FC Lausanne-Sport","Switzerland Super League",67,65,68,67,2.5,1862],
-  ["FC Sion","Switzerland Super League",67,67,67,68,2.5,110770],
-  ["Fatih Karagümrük S.K.","Turkey Süper Lig",67,68,67,68,2.0,111117],
-  ["GKS Katowice","Poland Ekstraklasa",67,66,67,67,2.0,110206],
-  ["Gençlerbirliği","Turkey Süper Lig",67,69,66,67,2.5,101025],
-  ["Godoy Cruz","Argentina Primera División",67,68,66,67,3.0,111706],
-  ["Guaraní (Paraguay)","CONMEBOL Sudamericana",67,69,67,65,null,111329],
-  ["Heracles Almelo","Eredivisie",67,68,66,66,2.0,100634],
-  ["Huddersfield Town","England League One",67,66,67,66,2.5,1939],
-  ["IF Elfsborg","Sweden Allsvenskan",67,65,68,67,2.5,700],
-  ["Juve Stabia","Italy Serie B",67,66,67,67,2.0,112124],
-  ["Juventud de Las Piedras","CONMEBOL Sudamericana",67,66,66,67,null,112112],
-  ["Mantova","Italy Serie B",67,69,65,65,2.5,111433],
-  ["Mjällby AIF","Sweden Allsvenskan",67,67,68,69,2.5,112072],
-  ["Molde FK","Norway Eliteserien",67,67,67,66,3.0,417],
-  ["NAC Breda","Eredivisie",67,68,67,67,2.0,1904],
-  ["PEC Zwolle","Eredivisie",67,67,67,66,2.0,1914],
-  ["Palestino","CONMEBOL Sudamericana",67,66,66,66,null,111328],
-  ["Philadelphia Union","USA Major League Soccer",67,68,68,66,2.5,112134],
-  ["Preußen Münster","Germany 2. Bundesliga",67,67,67,67,2.5,531],
-  ["RAAL La Louvière","Belgium Pro League",67,63,67,67,2.0,132231],
-  ["Red Bull New York","USA Major League Soccer",67,69,66,62,3.0,689],
-  ["Red Star FC (FRANCE)","France Ligue 2",67,64,68,67,2.0,111273],
-  ["Reggiana","Italy Serie B",67,67,66,66,2.0,110740],
-  ["SD Huesca","Spain Segunda División",67,67,67,66,2.5,110839],
-  ["San Jose Earthquakes","USA Major League Soccer",67,65,68,65,3.0,111928],
-  ["Shanghai Port","China Super League",67,74,65,66,2.5,112540],
-  ["Sheffield Wednesday","England Championship",67,68,65,66,2.0,1807],
-  ["SpVgg Greuther Fürth","Germany 2. Bundesliga",67,72,68,67,2.5,165],
-  ["USL Dunkerque","France Ligue 2",67,67,66,67,2.0,111276],
-  ["Universidad Central de Venezuela","CONMEBOL Libertadores",67,70,66,66,null,115693],
-  ["Viborg FF","Denmark Superliga",67,65,68,67,2.0,1443],
-  ["Wolfsberger AC","Austria Bundesliga",67,66,67,67,2.5,111822],
-  ["AIK","Sweden Allsvenskan",66,64,66,63,2.5,433],
-  ["Academia Puerto Cabello","CONMEBOL Sudamericana",66,67,67,66,null,114611],
-  ["Al Fayha","Saudi Pro League",66,67,65,67,1.5,113057],
-  ["Al Kholood","Saudi Pro League",66,68,64,66,1.0,131735],
-  ["Always Ready","CONMEBOL Libertadores",66,67,65,66,null,114577],
-  ["Blackpool","England League One",66,66,66,65,2.0,1926],
-  ["Boston River","CONMEBOL Sudamericana",66,64,67,64,null,112868],
-  ["CF Montréal","USA Major League Soccer",66,68,66,64,2.0,111139],
-  ["Carabobo FC","CONMEBOL Libertadores",66,61,67,66,null,110991],
-  ["Central Córdoba","Argentina Primera División",66,65,67,65,3.0,112965],
-  ["Cienciano","CONMEBOL Sudamericana",66,68,66,66,null,111011],
-  ["Clermont Foot","France Ligue 2",66,65,65,65,2.0,1815],
-  ["Club Atlético Grau","CONMEBOL Sudamericana",66,67,67,65,null,114598],
-  ["Colo-Colo","CONMEBOL Libertadores",66,68,66,65,null,110980],
-  ["Coquimbo Unido","CONMEBOL Libertadores",66,65,66,67,null,112705],
-  ["Deportivo Cuenca","CONMEBOL Sudamericana",66,66,66,66,null,110982],
-  ["Deportivo La Guaira","CONMEBOL Libertadores",66,67,66,67,null,112853],
-  ["Excelsior","Eredivisie",66,66,66,66,2.0,1971],
-  ["FC Annecy","France Ligue 2",66,64,67,66,2.0,131447],
-  ["FC Botoșani","Romania Liga I",66,63,66,65,2.0,110752],
-  ["FC Luzern","Switzerland Super League",66,67,65,66,2.5,897],
-  ["FC Thun","Switzerland Super League",66,64,66,67,1.5,1715],
-  ["FC Volendam","Eredivisie",66,66,67,66,2.0,645],
-  ["FC Zürich","Switzerland Super League",66,64,64,65,2.0,894],
-  ["GAIS","Sweden Allsvenskan",66,63,63,66,2.0,111594],
-  ["Gangwon FC","Korea K League 1",66,60,67,66,2.0,112115],
-  ["Grenoble Foot 38","France Ligue 2",66,65,66,67,2.0,1805],
-  ["Hansa Rostock","Germany 3. Liga",66,66,65,66,2.0,27],
-  ["IFK Göteborg","Sweden Allsvenskan",66,64,68,65,2.0,319],
-  ["Korona Kielce","Poland Ekstraklasa",66,66,67,66,2.0,111083],
-  ["Lechia Gdańsk","Poland Ekstraklasa",66,67,67,65,2.0,111091],
-  ["Lincoln City","England League One",66,65,66,66,1.5,149],
-  ["Macará","CONMEBOL Sudamericana",66,66,66,66,null,114578],
-  ["Montevideo City Torque","CONMEBOL Sudamericana",66,65,68,65,null,113143],
-  ["Motherwell","Scotland Premiership",66,71,66,65,2.0,83],
-  ["Motor Lublin","Poland Ekstraklasa",66,67,68,65,2.0,111097],
-  ["O'Higgins","CONMEBOL Sudamericana",66,66,68,66,null,112116],
-  ["Odense Boldklub","Denmark Superliga",66,66,67,65,2.0,272],
-  ["Piast Gliwice","Poland Ekstraklasa",66,65,65,65,2.0,111086],
-  ["Plymouth Argyle","England League One",66,65,65,66,2.0,1929],
-  ["Pohang Steelers","Korea K League 1",66,66,66,66,2.5,1474],
-  ["Radomiak Radom","Poland Ekstraklasa",66,66,66,67,2.0,111088],
-  ["Reading","England League One",66,65,66,66,2.0,1793],
-  ["SC Bastia","France Ligue 2",66,64,67,66,1.5,58],
-  ["Shanghai Shenhua","China Super League",66,62,67,66,2.5,110955],
-  ["Silkeborg IF","Denmark Superliga",66,70,65,66,2.5,270],
-  ["Stade Lavallois MFC","France Ligue 2",66,67,66,65,2.5,1814],
-  ["Stockport County","England League One",66,65,66,65,2.0,1931],
-  ["TSV 1860 München","Germany 3. Liga",66,66,65,65,2.0,33],
-  ["Telstar","Eredivisie",66,63,66,66,1.5,100638],
-  ["Vålerenga Fotball","Norway Eliteserien",66,66,65,66,2.0,920],
-  ["Wycombe Wanderers","England League One",66,67,66,66,2.0,1933],
-  ["Zagłębie Lubin","Poland Ekstraklasa",66,66,65,66,2.0,110749],
-  ["1. FC Saarbrücken","Germany 3. Liga",65,66,65,64,2.0,523],
-  ["AS Nancy","France Ligue 2",65,64,65,63,1.5,1823],
-  ["Al Hazem","Saudi Pro League",65,74,65,59,0.5,113222],
-  ["Al Okhdood","Saudi Pro League",65,67,66,62,1.5,113060],
-  ["Al Riyadh","Saudi Pro League",65,63,65,61,1.5,113037],
-  ["Alemannia Aachen","Germany 3. Liga",65,65,64,64,1.5,1826],
-  ["Altach","Austria Bundesliga",65,64,66,63,2.0,15009],
-  ["Auckland FC","Australia A-League",65,63,65,66,1.5,131739],
-  ["Barnsley","England League One",65,66,64,65,2.0,1932],
-  ["Beijing Guoan","China Super League",65,67,65,65,2.5,111768],
-  ["Blooming","CONMEBOL Sudamericana",65,67,65,64,null,110967],
-  ["Bradford City","England League One",65,66,65,64,1.5,1804],
-  ["Caracas FC","CONMEBOL Sudamericana",65,65,64,65,null,110989],
-  ["Chengdu Rongcheng F.C.","China Super League",65,67,68,62,2.0,116360],
-  ["Damac FC","Saudi Pro League",65,66,64,66,1.0,113217],
-  ["Deportivo Riestra","Argentina Primera División",65,67,65,64,2.0,115472],
-  ["Deportivo Táchira","CONMEBOL Libertadores",65,64,67,64,null,110990],
-  ["Dundee United","Scotland Premiership",65,65,65,63,1.5,181],
-  ["Energie Cottbus","Germany 3. Liga",65,65,65,64,1.5,162],
-  ["Eyüpspor","Turkey Süper Lig",65,64,65,63,3.5,131174],
-  ["FC Anyang","Korea K League 1",65,64,65,65,2.0,112555],
-  ["FC Argeș","Romania Liga I",65,65,64,65,1.5,100759],
-  ["FC Winterthur","Switzerland Super League",65,65,64,65,1.5,1713],
-  ["Farul Constanța","Romania Liga I",65,66,66,65,2.0,110075],
-  ["Fredrikstad FK","Norway Eliteserien",65,65,67,63,2.0,2041],
-  ["GV San José","CONMEBOL Sudamericana",65,66,66,64,null,132375],
-  ["Gimcheon Sangmu","Korea K League 1",65,65,64,63,2.0,2055],
-  ["Grasshopper Club Zürich","Switzerland Super League",65,66,64,62,1.5,322],
-  ["Grazer AK","Austria Bundesliga",65,65,65,65,1.5,113616],
-  ["Hartberg","Austria Bundesliga",65,65,65,63,1.5,2017],
-  ["IK Sirius","Sweden Allsvenskan",65,69,64,64,2.0,113458],
-  ["Independiente Petrolero","CONMEBOL Sudamericana",65,65,66,64,null,115517],
-  ["Jeju SK FC","Korea K League 1",65,64,64,63,2.0,1478],
-  ["KFUM-Kameratene Oslo","Norway Eliteserien",65,63,64,63,1.5,131491],
-  ["Kilmarnock","Scotland Premiership",65,63,64,64,1.5,82],
-  ["Le Mans FC","France Ligue 2",65,65,66,64,1.5,1739],
-  ["Leyton Orient","England League One",65,67,64,64,2.0,1958],
-  ["MSV Duisburg","Germany 3. Liga",65,67,65,64,1.5,1825],
-  ["Melbourne City","Australia A-League",65,62,65,64,1.5,112224],
-  ["Melbourne Victory","Australia A-League",65,65,65,62,1.5,111397],
-  ["Milton Keynes Dons","England League Two",65,66,65,65,1.5,1798],
-  ["Mohun Bagan Super Giant","Indian Super League",65,69,63,65,1.5,113146],
-  ["Mushuc Runa","CONMEBOL Sudamericana",65,64,65,65,null,114615],
-  ["Nacional Potosí","CONMEBOL Sudamericana",65,66,64,65,null,112667],
-  ["Pau FC","France Ligue 2",65,65,66,64,2.0,110321],
-  ["Petrolul Ploiești","Romania Liga I",65,66,64,65,null,110078],
-  ["Racing Club De Montevideo","CONMEBOL Sudamericana",65,65,65,66,null,112615],
-  ["Rot-Weiß Essen","Germany 3. Liga",65,66,66,64,2.0,526],
-  ["SC Oțelul Galați","Romania Liga I",65,64,65,65,1.5,110072],
-  ["SC Verl","Germany 3. Liga",65,62,65,64,1.5,110501],
-  ["SSV Ulm 1846","Germany 3. Liga",65,62,65,64,1.5,110176],
-  ["SV Ried","Austria Bundesliga",65,65,65,65,1.5,780],
-  ["SV Wehen Wiesbaden","Germany 3. Liga",65,64,65,62,2.0,492],
-  ["Sarpsborg 08","Norway Eliteserien",65,65,65,65,2.0,112199],
-  ["Shandong Taishan","China Super League",65,73,67,62,2.0,111724],
-  ["Sporting KC","USA Major League Soccer",65,75,65,62,3.0,696],
-  ["Stevenage","England League One",65,66,65,65,1.5,361],
-  ["Sydney FC","Australia A-League",65,66,65,66,1.0,111400],
-  ["Sønderjyske Fodbold","Denmark Superliga",65,64,65,66,1.5,1447],
-  ["Tromsø IL","Norway Eliteserien",65,63,65,66,2.0,418],
-  ["UTA Arad","Romania Liga I",65,65,65,66,2.0,110750],
-  ["Unión Española","CONMEBOL Sudamericana",65,66,65,65,null,110977],
-  ["Vejle BK","Denmark Superliga",65,65,64,65,null,822],
-  ["VfL Osnabrück","Germany 3. Liga",65,66,65,66,2.0,487],
-  ["WSG Tirol","Austria Bundesliga",65,65,66,66,1.5,15040],
-  ["Western Sydney Wanderers","Australia A-League",65,65,66,63,1.5,112427],
-  ["Wisła Płock","Poland Ekstraklasa",65,65,66,65,1.5,1569],
-  ["Adelaide United","Australia A-League",64,65,62,63,1.0,111393],
-  ["Al Fateh","Saudi Pro League",64,67,65,61,1.5,112390],
-  ["Al Najmah","Saudi Pro League",64,64,66,61,1.0,115892],
-  ["Alianza Atlético de Sullana","CONMEBOL Sudamericana",64,64,65,64,null,111012],
-  ["Arka Gdynia","Poland Ekstraklasa",64,64,64,63,1.5,111082],
-  ["Bruk-Bet Termalica Nieciecza","Poland Ekstraklasa",64,64,64,64,1.5,112510],
-  ["Daegu FC","Korea K League 1",64,63,65,60,2.0,2056],
-  ["Degerfors IF","Sweden Allsvenskan",64,64,62,63,1.5,113892],
-  ["Doncaster Rovers","England League One",64,62,64,63,1.5,142],
-  ["Dundee FC","Scotland Premiership",64,66,64,64,1.0,180],
-  ["Erzgebirge Aue","Germany 3. Liga",64,66,63,64,1.5,506],
-  ["FC Hermannstadt","Romania Liga I",64,64,65,64,2.0,114147],
-  ["FC Ingolstadt 04","Germany 3. Liga",64,60,64,64,1.5,111239],
-  ["IF Brommapojkarna","Sweden Allsvenskan",64,64,64,62,2.0,111705],
-  ["IFK Norrköping","Sweden Allsvenskan",64,67,66,64,2.0,702],
-  ["Jahn Regensburg","Germany 3. Liga",64,63,64,63,1.5,543],
-  ["Livingston","Scotland Premiership",64,63,64,62,1.5,621],
-  ["Mansfield Town","England League One",64,64,63,63,1.5,1940],
-  ["Newcastle Jets","Australia A-League",64,65,64,62,1.0,111398],
-  ["Peterborough United","England League One",64,66,64,64,1.5,1938],
-  ["Port Vale","England League One",64,65,63,65,1.5,1928],
-  ["Real Sociedad B","Spain Segunda División",64,64,64,64,1.5,110711],
-  ["Rodez Aveyron Football","France Ligue 2",64,66,65,64,1.5,111659],
-  ["Rotherham United","England League One",64,63,64,64,2.0,1797],
-  ["SV Waldhof Mannheim","Germany 3. Liga",64,65,63,64,1.5,110532],
-  ["Shamrock Rovers","Rep. Ireland Premier Division",64,65,63,64,1.0,306],
-  ["St. Mirren","Scotland Premiership",64,64,65,63,1.5,100805],
-  ["Suwon FC","Korea K League 1",64,63,64,62,2.0,112558],
-  ["US Boulogne","France Ligue 2",64,62,65,64,null,132680],
-  ["Viktoria Köln","Germany 3. Liga",64,62,64,64,1.5,110645],
-  ["Wigan Athletic","England League One",64,65,63,64,2.0,1917],
-  ["AFC Wimbledon","England League One",63,63,63,64,1.0,112259],
-  ["Brisbane Roar","Australia A-League",63,62,64,63,1.0,111395],
-  ["Burton Albion","England League One",63,64,62,63,1.5,15015],
-  ["Cambridge United","England League Two",63,63,62,63,1.5,1944],
-  ["Chesterfield","England League Two",63,60,63,63,1.0,1924],
-  ["Colchester United","England League Two",63,62,63,62,1.0,1935],
-  ["Exeter City","England League One",63,65,62,63,1.5,143],
-  ["FC Fredericia","Denmark Superliga",63,63,63,63,1.0,15006],
-  ["Falkirk","Scotland Premiership",63,63,63,62,1.0,79],
-  ["HJK Helsinki","Rest of World",63,67,63,63,null,100325],
-  ["Halmstads BK","Sweden Allsvenskan",63,62,63,63,1.5,321],
-  ["HamKam Fotball","Norway Eliteserien",63,57,64,63,1.5,1756],
-  ["Macarthur FC","Australia A-League",63,66,62,62,1.0,114604],
-  ["Northampton Town","England League One",63,62,63,64,1.5,1930],
-  ["Notts County","England League Two",63,63,63,62,1.5,1937],
-  ["Perth Glory","Australia A-League",63,67,59,63,1.5,111399],
-  ["Salford City","England League Two",63,63,62,62,1.0,113926],
-  ["San Antonio Bulo Bulo","CONMEBOL Libertadores",63,59,62,64,null,131795],
-  ["San Martín de San Juan","Argentina Primera División",63,62,64,63,2.0,111713],
-  ["Sandefjord Fotball","Norway Eliteserien",63,61,63,63,1.5,1757],
-  ["Strømsgodset Toppfotball","Norway Eliteserien",63,63,63,66,2.0,922],
-  ["Unirea Slobozia","Romania Liga I",63,64,63,63,1.5,131459],
-  ["1. FC Schweinfurt 05","Germany 3. Liga",62,63,61,63,1.5,583],
-  ["Barnet","England League Two",62,62,62,62,1.0,135],
-  ["Barrow","England League Two",62,61,61,62,1.0,381],
-  ["Bristol Rovers","England League Two",62,61,62,63,1.5,1962],
-  ["Bromley","England League Two",62,62,62,62,1.0,112764],
-  ["Bryne FK","Norway Eliteserien",62,62,62,62,1.5,1523],
-  ["Central Coast Mariners","Australia A-League",62,59,61,63,1.0,111396],
-  ["Cheltenham Town","England League Two",62,60,62,62,1.0,1936],
-  ["Crawley Town","England League Two",62,58,61,61,1.0,110890],
-  ["Dalian Yingbo FC","China Super League",62,64,63,61,1.5,132305],
-  ["Derry City","Rep. Ireland Premier Division",62,63,62,62,1.0,445],
-  ["FK Csíkszereda Miercurea Ciuc","Romania Liga I",62,64,62,62,1.0,114546],
-  ["FK Haugesund","Norway Eliteserien",62,63,61,62,1.5,1463],
-  ["Fleetwood Town","England League Two",62,62,63,61,1.0,112260],
-  ["Gillingham","England League Two",62,62,62,62,1.0,1802],
-  ["Grimsby Town","England League Two",62,63,62,61,1.0,92],
-  ["Gwangju FC","Korea K League 1",62,59,60,60,1.5,112258],
-  ["IFK Värnamo","Sweden Allsvenskan",62,64,62,62,1.5,112126],
-  ["Kristiansund BK","Norway Eliteserien",62,63,62,61,1.5,113459],
-  ["Metaloglobus București","Romania Liga I",62,62,62,60,1.0,114545],
-  ["Shelbourne","Rep. Ireland Premier Division",62,61,62,61,1.0,834],
-  ["St Patrick's Athletic","Rep. Ireland Premier Division",62,62,63,61,1.0,423],
-  ["Swindon Town","England League Two",62,64,63,62,1.0,1934],
-  ["TSV Havelse","Germany 3. Liga",62,62,62,62,1.0,110678],
-  ["Tianjin Jinmen Tiger","China Super League",62,72,64,59,1.5,111774],
-  ["Tranmere Rovers","England League Two",62,62,60,62,1.0,15048],
-  ["Walsall","England League Two",62,64,61,62,1.0,1803],
-  ["Wellington Phoenix","Australia A-League",62,63,62,61,1.0,111766],
-  ["Western United FC","Other",62,61,62,64,1.0,114023],
-  ["Zhejiang Professional FC","China Super League",62,66,60,62,1.5,112163],
-  ["Östers IF","Sweden Allsvenskan",62,62,62,63,1.5,1870],
-  ["Bohemians","Rep. Ireland Premier Division",61,58,62,60,1.0,305],
-  ["Changchun Yatai","China Super League",61,62,60,60,1.0,111769],
-  ["Crewe Alexandra","England League Two",61,61,61,61,1.0,121],
-  ["Harrogate Town","England League Two",61,61,60,60,1.0,112222],
-  ["Henan FC","China Super League",61,54,62,62,1.0,111779],
-  ["Oldham Athletic","England League Two",61,61,60,61,1.0,1920],
-  ["Qingdao West Coast FC","China Super League",61,55,66,58,1.0,131488],
-  ["Shrewsbury Town","England League Two",61,58,60,62,1.5,127],
-  ["Sportivo Luqueño","CONMEBOL Sudamericana",61,61,61,61,null,111006],
-  ["VfB Stuttgart II","Germany 3. Liga",61,62,61,62,1.0,110697],
-  ["Accrington Stanley","England League Two",60,60,60,60,0.5,110313],
-  ["Meizhou Hakka","China Super League",60,65,59,60,1.0,114628],
-  ["Newport County","England League Two",60,60,60,59,0.5,112254],
-  ["TSG 1899 Hoffenheim II","Germany 3. Liga",60,59,61,62,1.0,110685],
-  ["Wuhan Three Towns","China Super League",60,64,58,61,1.5,116361],
-  ["Yunnan Yukun","China Super League",60,70,63,58,1.5,131531],
-  ["Bengaluru FC","Indian Super League",59,62,56,60,0.5,113302],
-  ["Chennaiyin FC","Indian Super League",59,62,61,58,0.5,113297],
-  ["Drogheda United","Rep. Ireland Premier Division",59,60,58,60,0.5,1572],
-  ["East Bengal FC","Indian Super League",59,60,60,58,0.5,111629],
-  ["FC Goa","Indian Super League",59,55,59,60,1.0,113298],
-  ["Galway United","Rep. Ireland Premier Division",59,58,59,58,0.5,1571],
-  ["Shenzhen Peng City","China Super League",59,61,61,58,1.0,131487],
-  ["Sligo Rovers","Rep. Ireland Premier Division",59,58,60,58,0.5,563],
-  ["United Tigers SC","Indian Super League",59,58,58,60,0.5,132681],
-  ["Waterford","Rep. Ireland Premier Division",59,60,59,57,0.5,753],
-  ["Jamshedpur FC","Indian Super League",58,63,56,58,0.5,114168],
-  ["Mumbai City FC","Indian Super League",58,65,55,56,1.0,113300],
-  ["Qingdao Hainiu FC","China Super League",58,57,60,57,1.0,131173],
-  ["NorthEast United","Indian Super League",57,51,62,54,0.5,113040],
-  ["Odisha FC","Indian Super League",57,56,54,55,1.0,113257],
-  ["Punjab FC","Indian Super League",57,60,56,56,0.5,115202],
-  ["Cork City","Rep. Ireland Premier Division",56,59,55,55,0.5,422],
-  ["SC Delhi","Indian Super League",55,53,55,54,null,113301],
-  ["Kerala Blasters FC","Indian Super League",54,56,55,53,0.5,113299],
-  ["Mohammedan SC","Indian Super League",52,51,52,51,0.5,111633],
-  ["France","International",86,87,85,85,null],
-  ["Spain","International",85,85,86,83,null],
-  ["Brazil","International",84,85,83,84,null],
-  ["England","International",84,86,85,83,null],
-  ["Germany","International",84,82,84,84,null],
-  ["Portugal","International",84,84,86,84,null],
-  ["Argentina","International",83,84,83,79,null],
-  ["Italy","International",83,82,83,83,null],
-  ["Netherlands","International",82,80,83,83,null],
-  ["Belgium","International",81,82,82,78,null],
-  ["Croatia","International",79,78,81,77,null],
-  ["Morocco","International",79,80,78,78,null],
-  ["Norway","International",79,80,81,75,null],
-  ["Türkiye","International",79,79,80,78,null],
-  ["Uruguay","International",79,78,79,79,null],
-  ["Austria","International",78,77,78,79,null],
-  ["Colombia","International",78,79,79,78,null],
-  ["Denmark","International",78,78,79,78,null],
-  ["Switzerland","International",78,77,79,76,null],
-  ["Poland","International",77,82,75,78,null],
-  ["USA","International",77,77,79,77,null],
-  ["Mexico","International",76,78,75,75,null],
-  ["Scotland","International",76,77,78,74,null],
-  ["Canada","International",75,77,74,74,null],
-  ["Wales","International",75,74,76,74,null],
-  ["Ireland","International",74,75,71,74,null],
-  ["Australia","International",71,69,68,71,null],
-  ["Iceland","International",71,68,73,69,null],
-  ["New Zealand","International",70,74,69,69,null],
-].map(([name, league, ovr, att, mid, def, stars, id]) =>
-  ({ name, league, ovr, att, mid, def, id, stars: stars ?? starsFromOvr(ovr), approx: stars == null, nation: league === "International" }));
-
 const $ = id => document.getElementById(id);
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
 const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -1147,6 +612,10 @@ const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 // Drawn × so it sits exactly in the centre of its round hover background
 const X_ICON = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 const CHEVRON = '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+const plain = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const buzz = pattern => { try { navigator.vibrate?.(pattern); } catch (e) {} };
 
 // ---------- Glass dropdowns ----------
 // Native <select> popups are drawn by the OS and can't be styled, so each select is
@@ -1304,43 +773,88 @@ function renderMute() {
 $("muteBtn").addEventListener("click", () => { Sound.toggle(); renderMute(); });
 renderMute();
 
-// ---------- Tabs ----------
-function showTab(name) {
-  ["picker", "wheel"].forEach(n => {
-    $("tab-" + n).hidden = n !== name;
-    $("tabBtn-" + n).setAttribute("aria-selected", n === name);
-  });
-  store("fc26-tab", name);
+// ---------- Confetti ----------
+const Confetti = (() => {
+  const cv = $("confetti"), cx = cv.getContext("2d");
+  const COLORS = ["#ffd60a", "#409cff", "#ffffff", "#30d158", "#ff375f", "#bf5af2"];
+  let parts = [], raf = null;
+  function frame() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    parts = parts.filter(p => p.y < cv.height + 40 && p.life-- > 0);
+    for (const p of parts) {
+      p.vy += .25 * devicePixelRatio; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot);
+      cx.fillStyle = p.c; cx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      cx.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(frame) : (cx.clearRect(0, 0, cv.width, cv.height), null);
+  }
+  return {
+    burst() {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const d = devicePixelRatio || 1;
+      cv.width = innerWidth * d; cv.height = innerHeight * d;
+      for (let i = 0; i < 160; i++) {
+        const fromLeft = i % 2 === 0;
+        parts.push({
+          x: fromLeft ? 0 : cv.width, y: cv.height * .55,
+          vx: (fromLeft ? 1 : -1) * (6 + Math.random() * 10) * d, vy: -(10 + Math.random() * 12) * d,
+          w: (6 + Math.random() * 6) * d, h: (8 + Math.random() * 8) * d,
+          rot: Math.random() * 6, vr: (Math.random() - .5) * .4,
+          c: COLORS[i % COLORS.length], life: 260
+        });
+      }
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+  };
+})();
+
+// ---------- Game version & team data ----------
+const VERSIONS = Object.keys(window.FC_DATA || {}).sort();
+let version, TEAMS = [], TEAM_BY_NAME = new Map(), LEAGUES = {};
+
+function loadVersion(v) {
+  version = FC_DATA[v] ? v : VERSIONS[VERSIONS.length - 1];
+  store("fc-version", version);
+  TEAMS = FC_DATA[version].teams.map(([name, league, ovr, att, mid, def, stars, est, id, flag]) =>
+    ({ name, league, ovr, att, mid, def, stars, approx: !!est, id, flag, nation: league === "International" }));
+  TEAM_BY_NAME = new Map(TEAMS.map(t => [t.name, t]));
+  // League lists per team type, worked out once per version
+  for (const type of ["all", "club", "nation"])
+    LEAGUES[type] = [...new Set(TEAMS.filter(t => type === "all" || (type === "nation") === t.nation).map(t => t.league))];
+  const label = FC_DATA[version].label;
+  $("appTitle").textContent = `${label} Team Picker`;
+  document.title = `${label} Team Picker`;
 }
-$("tabBtn-picker").addEventListener("click", () => showTab("picker"));
-$("tabBtn-wheel").addEventListener("click", () => showTab("wheel"));
+
+// ---------- Tabs ----------
+const TABS = ["picker", "wheel", "tour"];
+let currentTab = "picker";
+function showTab(name) {
+  currentTab = TABS.includes(name) ? name : "picker";
+  TABS.forEach(n => {
+    $("tab-" + n).hidden = n !== currentTab;
+    $("tabBtn-" + n).setAttribute("aria-selected", n === currentTab);
+  });
+  store("fc26-tab", currentTab);
+  if (currentTab === "tour") renderTour();
+}
+TABS.forEach(n => $("tabBtn-" + n).addEventListener("click", () => showTab(n)));
 
 // ---------- Shared team helpers ----------
-let players = load("fc26-players", []);
+// Players are {name, skill 1–3}; older saves stored plain names.
+let players = load("fc26-players", []).map(p => typeof p === "string" ? { name: p, skill: 2 } : p);
 function save() { store("fc26-players", players); }
 
-function starStr(s) { return "★".repeat(Math.floor(s)) + (s % 1 ? "½" : ""); }
-function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
-
-// ISO codes for national team flags (flagcdn.com)
-const FLAGS = {
-  "France":"fr","Spain":"es","England":"gb-eng","Portugal":"pt","Germany":"de","Argentina":"ar","Brazil":"br",
-  "Netherlands":"nl","Italy":"it","Belgium":"be","Croatia":"hr","Uruguay":"uy","Colombia":"co","Morocco":"ma",
-  "Denmark":"dk","Switzerland":"ch","Norway":"no","Türkiye":"tr","Austria":"at","USA":"us","Mexico":"mx",
-  "Poland":"pl","Scotland":"gb-sct","Wales":"gb-wls","Ireland":"ie","Australia":"au",
-  "Canada":"ca","Iceland":"is","New Zealand":"nz"
-};
+function starStr(s) { return s < 1 ? "½" : "★".repeat(Math.floor(s)) + (s % 1 ? "½" : ""); }
 
 const logoCache = load("fc26-logos-v2", {});
 
 // Logo sources in order of preference. Flags are saved next to this file (with
 // flagcdn as backup); club crests are the in-game badges from FIFA Index.
 function logoSources(t) {
-  if (t.nation) {
-    const c = FLAGS[t.name];
-    return c ? [`flags/${c}.png`, `https://flagcdn.com/w160/${c}.png`] : [];
-  }
-  return [`https://images.fifaindex.com/fc26/teams/${t.id}.png`];
+  if (t.nation) return t.flag ? [`flags/${t.flag}.png`, `https://flagcdn.com/w160/${t.flag}.png`] : [];
+  return [`https://images.fifaindex.com/${version}/teams/${t.id}.png`];
 }
 
 // Start fetching crests early (e.g. while the picker is still cycling names).
@@ -1361,7 +875,6 @@ async function wikiLogo(t) {
     const page = Object.values(data.query?.pages || {})[0];
     // Search can land on a different club (e.g. "Los Angeles Galaxy" → LAFC), so only
     // accept the image if the article title contains the club's last distinctive word.
-    const plain = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     const words = plain(t.name).split(/[^a-z0-9]+/).filter(w => w && !/^(fc|cf|sc|afc|ac|as|cd|fk|sk|bk|if|club|\d+)$/.test(w));
     const key = words[words.length - 1];
     const src = page && key && plain(page.title).includes(key) ? page.thumbnail?.source || null : null;
@@ -1376,18 +889,18 @@ function initials(name) {
 }
 
 // Fills a .logo box with initials, then swaps in the crest/flag once it loads.
-function setLogo(box, t) {
+function setLogo(box, t, { wiki = true } = {}) {
   box.textContent = initials(t.name);
   const img = new Image();
   img.alt = t.name;
-  if (t.nation) img.className = "flag";
   img.decoding = "async";
+  if (t.nation) img.className = "flag";
   const sources = logoSources(t);
   let next = 0;
   img.onload = () => { box.textContent = ""; box.appendChild(img); };
   img.onerror = () => {
     if (next < sources.length) img.src = sources[next++];
-    else if (!t.nation && next++ === sources.length) wikiLogo(t).then(src => { if (src) img.src = src; });
+    else if (wiki && !t.nation && next++ === sources.length) wikiLogo(t).then(src => { if (src) img.src = src; });
   };
   if (sources.length) img.src = sources[next++];
 }
@@ -1397,12 +910,7 @@ function ratingsHtml(t) {
     .map(([k, v]) => `<div class="rating"><b class="${ratingClass(v)}">${v}</b><span>${k}</span></div>`).join("");
 }
 function starsText(t) { return (t.approx ? "≈ " : "") + starStr(t.stars); }
-
-// Fallback for teams missing from the star list: approximate stars from team OVR.
-function starsFromOvr(o) {
-  return o >= 83 ? 5 : o >= 80 ? 4.5 : o >= 76 ? 4 : o >= 72 ? 3.5 : o >= 68 ? 3 :
-         o >= 64 ? 2.5 : o >= 60 ? 2 : o >= 55 ? 1.5 : o >= 50 ? 1 : 0.5;
-}
+const APPROX_TITLE = "Not on the star list; estimated from teams with the same OVR";
 function ratingClass(r) { return r >= 80 ? "hi" : r >= 72 ? "mid" : "lo"; }
 
 function shuffle(a) {
@@ -1411,19 +919,31 @@ function shuffle(a) {
   return a;
 }
 
+// "Who" block used in tournament views: crest + player name + team
+function whoHtml(e) {
+  return `<div class="who"><span class="logo" data-team="${esc(e.team || "")}">${esc(initials(e.team || e.name))}</span>` +
+    `<span class="w-text"><span class="w-name">${esc(e.name)}</span>${e.team ? `<span class="w-team">${esc(e.team)}</span>` : ""}</span></div>`;
+}
+function fillLogos(root) {
+  root.querySelectorAll(".logo[data-team]").forEach(box => {
+    const t = TEAM_BY_NAME.get(box.dataset.team);
+    if (t) setLogo(box, t);
+  });
+}
+
 // ---------- Team picker ----------
 function renderPlayers() {
   const chips = $("chips");
+  chips.classList.toggle("show-skill", $("handicap").checked);
   if (!players.length) chips.innerHTML = '<span class="empty">No players yet — add some above.</span>';
   else chips.innerHTML = players.map((p, i) =>
-    `<span class="chip">${esc(p)}<button class="btn-remove" title="Remove" aria-label="Remove ${esc(p)}" data-i="${i}">${X_ICON}</button></span>`).join("");
+    `<span class="chip">${esc(p.name)}` +
+    `<button class="skill" data-skill="${i}" title="Skill ${p.skill}/3 (click to change)" aria-label="${esc(p.name)} skill ${p.skill} of 3">` +
+    [1, 2, 3].map(k => `<i class="${k <= p.skill ? "on" : ""}"></i>`).join("") + `</button>` +
+    `<button class="btn-remove" title="Remove" aria-label="Remove ${esc(p.name)}" data-i="${i}">${X_ICON}</button></span>`).join("");
   updatePool();
 }
 
-// League lists per team type, worked out once instead of on every change
-const LEAGUES = {};
-for (const type of ["all", "club", "nation"])
-  LEAGUES[type] = [...new Set(TEAMS.filter(t => type === "all" || (type === "nation") === t.nation).map(t => t.league))];
 function leagues() { return LEAGUES[$("typeSel").value]; }
 
 function renderLeagues() {
@@ -1458,44 +978,92 @@ function updatePool() {
   const n = pool().length;
   $("poolCount").textContent = `${n} team${n === 1 ? "" : "s"} in the pool`;
   $("spinBtn").disabled = picking || !players.length || !n;
+  if ($("browse").open) renderBrowse(true);
+}
+
+// Narrow the pool to a random window [lo, lo + width] of some rating that still has
+// enough teams for everyone (or any non-empty window when duplicates are allowed).
+function randomWindow(p, key, width, need, dupes) {
+  const inWindow = lo => p.filter(t => t[key] >= lo && t[key] <= lo + width);
+  const windows = [...new Set(p.map(t => t[key]))].filter(lo => dupes || inWindow(lo).length >= need);
+  return windows.length ? inWindow(windows[Math.floor(Math.random() * windows.length)]) : null;
 }
 
 function pickTeams() {
   let p = pool();
-  const dupes = $("allowDupes").checked;
-  const diff = $("maxDiff").value;
+  const n = players.length, dupes = $("allowDupes").checked;
+  const diff = $("maxDiff").value, ovr = $("ovrDiff").value;
   if (diff !== "any") {
-    // Pick a random star window [lo, lo + diff] that has enough teams for everyone (if dupes are off)
-    const d = +diff;
-    const inWindow = lo => p.filter(t => t.stars >= lo && t.stars <= lo + d);
-    const windows = [...new Set(p.map(t => t.stars))].filter(lo =>
-      dupes || inWindow(lo).length >= players.length);
-    if (!windows.length) { toast("No star range that tight has enough teams for everyone. Widen the difference, loosen the filters or allow duplicates."); return null; }
-    p = inWindow(windows[Math.floor(Math.random() * windows.length)]);
+    p = randomWindow(p, "stars", +diff, n, dupes);
+    if (!p) { toast("No star range that tight has enough teams for everyone. Widen the difference, loosen the filters or allow duplicates."); return null; }
   }
-  if (!dupes && p.length < players.length) {
-    toast(`Only ${p.length} teams match your filters for ${players.length} players. Loosen the filters or allow duplicates.`);
+  if (ovr !== "off") {
+    p = randomWindow(p, "ovr", +ovr, n, dupes);
+    if (!p) { toast("No OVR range that tight has enough teams for everyone. Widen the balance, loosen the filters or allow duplicates."); return null; }
+  }
+  if (!dupes && p.length < n) {
+    toast(`Only ${p.length} teams match your filters for ${n} players. Loosen the filters or allow duplicates.`);
     return null;
   }
-  if (dupes) return players.map(() => p[Math.floor(Math.random() * p.length)]);
-  return shuffle(p).slice(0, players.length);
+  const picks = dupes ? players.map(() => p[Math.floor(Math.random() * p.length)]) : shuffle(p).slice(0, n);
+  if (!$("handicap").checked) return picks;
+  // Handicap: strongest team to the lowest-skilled player (ties broken randomly)
+  const byStrength = picks.slice().sort((a, b) => b.ovr - a.ovr);
+  const order = shuffle(players.map((_, i) => i)).sort((a, b) => players[a].skill - players[b].skill);
+  const out = [];
+  order.forEach((pi, k) => { out[pi] = byStrength[k]; });
+  return out;
+}
+
+// The current draw, so results survive a reload and feed the tournament: [{name, team}]
+let draw = load("fc-draw", null);
+if (!draw || draw.version !== load("fc-version", null)) draw = { version: null, rows: [] };
+function saveDraw() { draw.version = version; store("fc-draw", draw); }
+
+function resultRowHtml(name, i) {
+  return `<div class="result spinning" id="r${i}">
+      <div class="logo">?</div>
+      <div><div class="player">${esc(name)}</div><div class="team">…</div><div class="meta">&nbsp;</div></div>
+      <div class="side"><div class="stars"></div><div class="ratings"></div></div>
+    </div>`;
+}
+
+function fillResult(el, t) {
+  el.className = "result done";
+  el.querySelector(".team").textContent = t.name;
+  el.querySelector(".meta").textContent = t.league;
+  const st = el.querySelector(".stars");
+  st.textContent = starsText(t);
+  st.title = t.approx ? APPROX_TITLE : "";
+  el.querySelector(".ratings").innerHTML = ratingsHtml(t);
+  setLogo(el.querySelector(".logo"), t);
+}
+
+// Static render of the saved draw (on load, after a manual pick, after a version switch)
+function renderResults() {
+  const rows = draw.rows;
+  $("toTour").hidden = !rows.some(r => r.team);
+  if (!rows.length) { $("results").innerHTML = '<p class="empty">No teams picked yet.</p>'; return; }
+  $("results").innerHTML = rows.map((r, i) => resultRowHtml(r.name, i)).join("");
+  rows.forEach((r, i) => {
+    const t = TEAM_BY_NAME.get(r.team), el = $("r" + i);
+    if (t) fillResult(el, t);
+    else { el.className = "result"; el.querySelector(".team").textContent = "No team yet"; el.querySelector(".logo").textContent = "–"; }
+  });
 }
 
 function randomise() {
+  if (picking) return;
   const picks = pickTeams();
   if (!picks) return;
   picks.forEach(preloadLogo);  // crests download while the names are still cycling
   const p = pool();
-  const names = players.slice();  // snapshot in case the list is edited mid-reveal
+  const names = players.map(pl => pl.name);  // snapshot in case the list is edited mid-reveal
   picking = true;
   updatePool();
   Sound.whoosh();
-  $("results").innerHTML = names.map((name, i) => `
-    <div class="result spinning" id="r${i}">
-      <div class="logo">?</div>
-      <div><div class="player">${esc(name)}</div><div class="team">…</div><div class="meta">&nbsp;</div></div>
-      <div class="side"><div class="stars"></div><div class="ratings"></div></div>
-    </div>`).join("");
+  $("toTour").hidden = true;
+  $("results").innerHTML = names.map(resultRowHtml).join("");
 
   let remaining = names.length;
   names.forEach((_, i) => {
@@ -1508,17 +1076,14 @@ function randomise() {
         setTimeout(tick, 60);
         return;
       }
-      const t = picks[i];
-      el.className = "result done";
-      teamEl.textContent = t.name;
-      el.querySelector(".meta").textContent = t.league;
-      const st = el.querySelector(".stars");
-      st.textContent = starsText(t);
-      if (t.approx) st.title = "Not on the star list; estimated from OVR";
-      el.querySelector(".ratings").innerHTML = ratingsHtml(t);
-      setLogo(el.querySelector(".logo"), t);
-      if (--remaining === 0) { Sound.win(); picking = false; updatePool(); }
-      else Sound.lock();
+      fillResult(el, picks[i]);
+      if (--remaining === 0) {
+        Sound.win(); buzz([60, 40, 140]); Confetti.burst();
+        draw.rows = names.map((name, k) => ({ name, team: picks[k].name }));
+        saveDraw();
+        $("toTour").hidden = false;
+        picking = false; updatePool();
+      } else { Sound.lock(); buzz(25); }
     };
     tick();
   });
@@ -1528,11 +1093,18 @@ $("addForm").addEventListener("submit", e => {
   e.preventDefault();
   const v = $("nameInput").value.trim();
   if (!v) return;
-  if (players.some(p => p.toLowerCase() === v.toLowerCase())) { toast("That player is already added."); return; }
-  players.push(v); save(); renderPlayers(); Sound.add();
+  if (players.some(p => p.name.toLowerCase() === v.toLowerCase())) { toast("That player is already added."); return; }
+  players.push({ name: v, skill: 2 }); save(); renderPlayers(); Sound.add();
   $("nameInput").value = ""; $("nameInput").focus();
 });
 $("chips").addEventListener("click", e => {
+  const skill = e.target.closest("[data-skill]");
+  if (skill) {
+    const p = players[+skill.dataset.skill];
+    p.skill = p.skill % 3 + 1;
+    save(); renderPlayers(); Sound.add();
+    return;
+  }
   const i = e.target.closest("[data-i]")?.dataset.i;
   if (i !== undefined) { players.splice(+i, 1); save(); renderPlayers(); Sound.remove(); }
 });
@@ -1542,7 +1114,80 @@ $("clearBtn").addEventListener("click", () => {
 });
 $("typeSel").addEventListener("change", () => { renderLeagues(); updatePool(); });
 ["minStars", "maxStars", "leagueSel"].forEach(id => $(id).addEventListener("change", updatePool));
+$("handicap").addEventListener("change", renderPlayers);
 $("spinBtn").addEventListener("click", randomise);
+$("toTour").addEventListener("click", () => { $("tFrom").value = "draw"; refreshSelect($("tFrom")); showTab("tour"); });
+
+// ---------- Browse teams ----------
+const BROWSE_STEP = 48;
+let browseLimit = BROWSE_STEP;
+function renderBrowse(keepLimit) {
+  if (!keepLimit) browseLimit = BROWSE_STEP;
+  const q = plain($("bSearch").value.trim()), key = $("bSort").value;
+  let list = pool();
+  if (q) list = list.filter(t => plain(t.name).includes(q) || plain(t.league).includes(q));
+  list = key === "name" ? list.slice().sort((a, b) => a.name.localeCompare(b.name))
+                        : list.slice().sort((a, b) => b[key] - a[key] || b.ovr - a.ovr);
+  $("bCount").textContent = `· ${list.length}`;
+  $("bGrid").innerHTML = list.slice(0, browseLimit).map(t => `
+    <button class="tcard" data-team="${esc(t.name)}">
+      <span class="logo">${t.nation && t.flag ? "" : esc(initials(t.name))}<img loading="lazy" alt="" src="${logoSources(t)[0] || ""}"${t.nation ? ' class="flag"' : ""}></span>
+      <span class="tc-name">${esc(t.name)}</span>
+      <span class="tc-meta">${esc(t.league)}</span>
+      <span class="tc-stats"><b class="${ratingClass(t.ovr)}">${t.ovr}</b><span class="stars"${t.approx ? ` title="${APPROX_TITLE}"` : ""}>${starsText(t)}</span></span>
+    </button>`).join("") || '<p class="empty">No teams match.</p>';
+  $("bMore").hidden = list.length <= browseLimit;
+}
+// Crest images: hide the initials once loaded, drop the image if it fails
+$("bGrid").addEventListener("load", e => {
+  if (e.target.tagName === "IMG") [...e.target.parentNode.childNodes].forEach(n => { if (n.nodeType === 3) n.remove(); });
+}, true);
+$("bGrid").addEventListener("error", e => { if (e.target.tagName === "IMG") e.target.remove(); }, true);
+$("browse").addEventListener("toggle", () => { if ($("browse").open) renderBrowse(); });
+$("bSearch").addEventListener("input", () => renderBrowse());
+$("bSort").addEventListener("change", () => renderBrowse());
+$("bMore").addEventListener("click", () => { browseLimit += BROWSE_STEP; renderBrowse(true); });
+
+// Click a team card → choose which player gets it
+let assignMenu = null;
+function closeAssign() { assignMenu?.remove(); assignMenu = null; }
+$("bGrid").addEventListener("click", e => {
+  const card = e.target.closest(".tcard");
+  if (!card) return;
+  if (!players.length) { toast("Add players first."); return; }
+  closeAssign();
+  const r = card.getBoundingClientRect();
+  assignMenu = document.createElement("div");
+  assignMenu.className = "assign-menu";
+  assignMenu.innerHTML = `<div class="am-title">Give ${esc(card.dataset.team)} to</div>` +
+    players.map((p, i) => `<div class="cselect-opt" data-p="${i}">${esc(p.name)}</div>`).join("");
+  document.body.appendChild(assignMenu);
+  const mw = assignMenu.offsetWidth, mh = assignMenu.offsetHeight;
+  assignMenu.style.left = Math.max(8, Math.min(r.left, innerWidth - mw - 8)) + "px";
+  assignMenu.style.top = (r.bottom + 6 + mh > innerHeight ? Math.max(8, r.top - mh - 6) : r.bottom + 6) + "px";
+  assignMenu.addEventListener("mousemove", ev => {
+    assignMenu.querySelectorAll(".cselect-opt").forEach(o => o.classList.toggle("hl", o === ev.target.closest(".cselect-opt")));
+  });
+  assignMenu.addEventListener("click", ev => {
+    const o = ev.target.closest("[data-p]");
+    if (!o) return;
+    assignTeam(players[+o.dataset.p].name, card.dataset.team);
+    closeAssign();
+  });
+});
+document.addEventListener("pointerdown", e => { if (assignMenu && !assignMenu.contains(e.target) && !e.target.closest(".tcard")) closeAssign(); });
+addEventListener("scroll", closeAssign, { passive: true });
+
+function assignTeam(playerName, teamName) {
+  // Keep the draw in step with the current player list, keeping existing picks
+  const prev = new Map(draw.rows.map(r => [r.name, r.team]));
+  draw.rows = players.map(p => ({ name: p.name, team: prev.get(p.name) || null }));
+  draw.rows.find(r => r.name === playerName).team = teamName;
+  saveDraw();
+  renderResults();
+  Sound.lock(); buzz(25);
+  toast(`${teamName} → ${playerName}`);
+}
 
 // ---------- Spin the wheel ----------
 const PALETTE = ["#ff453a", "#ff9f0a", "#ffd60a", "#32d74b", "#64d2ff", "#0a84ff", "#bf5af2", "#ff375f", "#5e5ce6", "#ac8e68"];
@@ -1700,7 +1345,7 @@ $("wAdd").addEventListener("click", () => {
 
 $("wFillPlayers").addEventListener("click", () => {
   if (!players.length) { toast("Add players on the Team Picker tab first."); return; }
-  wheelData = players.map((p, i) => seg(p, i));
+  wheelData = players.map((p, i) => seg(p.name, i));
   Sound.add();
   renderList(); wheelChanged();
 });
@@ -1795,7 +1440,7 @@ function inertia() {
 }
 
 // --- Button spin ---
-$("wSpin").addEventListener("click", () => {
+function spinWheel() {
   if (!wheelData.length || W.busy) return;
   cancelAnimationFrame(W.raf);
   W.dragging = false;
@@ -1812,7 +1457,8 @@ $("wSpin").addEventListener("click", () => {
     else finishSpin();
   };
   W.raf = requestAnimationFrame(step);
-});
+}
+$("wSpin").addEventListener("click", spinWheel);
 
 function hexToRgb(hex) {
   let c = hex.replace("#", "");
@@ -1824,7 +1470,7 @@ function finishSpin() {
   W.winner = segmentAt(W.rot);
   const s = wheelData[W.winner];
   if (!s) { setBusy(false); return; }
-  Sound.win();
+  Sound.win(); buzz([60, 40, 140]); Confetti.burst();
 
   const { r, g, b } = hexToRgb(s.color);
   const card = $("splashCard");
@@ -1835,8 +1481,8 @@ function finishSpin() {
   $("splashWinner").textContent = s.label;
   $("splashWinner").style.color = s.textColor || "#ffffff";
 
-  // If the segment is an FC 26 team, show its crest, stars and ratings too
-  const team = s.team && TEAMS.find(t => t.name === s.team);
+  // If the segment is a team in the current game, show its crest, stars and ratings too
+  const team = s.team && TEAM_BY_NAME.get(s.team);
   const box = $("splashTeam");
   box.hidden = !team;
   if (team) {
@@ -1861,17 +1507,246 @@ function closeSplash() {
 }
 $("splashClose").addEventListener("click", closeSplash);
 $("splash").addEventListener("click", e => { if (e.target.id === "splash") closeSplash(); });
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeSplash(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSplash(); closeAssign(); } });
+
+// ---------- Tournament ----------
+// State: {format, entrants: [{name, team}], fixtures (league) or slots (knockout),
+//         scores: {key: {a, b, ga, gb, pen}}, celebrated}
+let T = load("fc-tournament", null);
+const saveTour = () => store("fc-tournament", T);
+
+// Circle method: everyone plays everyone once (twice, reversed, for home & away)
+function roundRobin(n, double) {
+  const ids = [...Array(n).keys()];
+  if (n % 2) ids.push(-1);  // -1 = sits this round out
+  const m = ids.length, rounds = [];
+  for (let r = 0; r < m - 1; r++) {
+    const pairs = [];
+    for (let i = 0; i < m / 2; i++) {
+      const a = ids[i], b = ids[m - 1 - i];
+      if (a !== -1 && b !== -1) pairs.push(r % 2 ? [b, a] : [a, b]);
+    }
+    rounds.push(pairs);
+    ids.splice(1, 0, ids.pop());
+  }
+  if (double) rounds.push(...rounds.map(ps => ps.map(([a, b]) => [b, a])));
+  return rounds.flatMap((ps, r) => ps.map(([a, b], k) => ({ key: `L${r}-${k}`, round: r, a, b })));
+}
+
+function startTournament() {
+  const fromDraw = $("tFrom").value === "draw";
+  let entrants;
+  if (fromDraw) {
+    entrants = draw.rows.filter(r => r.team).map(r => ({ name: r.name, team: r.team }));
+    if (entrants.length < 2) { toast("Draw teams for at least 2 players first (Team Picker tab), or choose “Players only”."); return; }
+  } else {
+    entrants = players.map(p => ({ name: p.name, team: null }));
+    if (entrants.length < 2) { toast("Add at least 2 players on the Team Picker tab."); return; }
+  }
+  entrants = shuffle(entrants);
+  const format = $("tFormat").value;
+  T = { format, version, entrants, scores: {}, celebrated: false };
+  if (format === "knockout") {
+    // Fill evens first, then odds, so byes are always paired with a real entrant
+    let size = 2;
+    while (size < entrants.length) size *= 2;
+    const order = [...Array(size).keys()].sort((x, y) => (x % 2) - (y % 2) || x - y);
+    T.slots = Array(size).fill(null);
+    entrants.forEach((_, i) => { T.slots[order[i]] = i; });
+  } else {
+    T.fixtures = roundRobin(entrants.length, format === "league2");
+  }
+  saveTour();
+  Sound.whoosh();
+  renderTour();
+}
+$("tStart").addEventListener("click", startTournament);
+
+const num = v => (v === "" || v == null || isNaN(v) ? null : +v);
+
+// Result of a stored score, or null if unplayed. Scores remember who played,
+// so editing an earlier knockout round can't leave stale results later on.
+function outcome(key, a, b) {
+  const s = T.scores[key];
+  if (!s || s.a !== a || s.b !== b || num(s.ga) == null || num(s.gb) == null) return null;
+  const ga = +s.ga, gb = +s.gb;
+  const winner = ga > gb ? a : gb > ga ? b : s.pen === "a" ? a : s.pen === "b" ? b : undefined;
+  return { ga, gb, winner, draw: ga === gb };
+}
+
+function standings() {
+  const rows = T.entrants.map((e, i) => ({ i, e, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }));
+  for (const f of T.fixtures) {
+    const o = outcome(f.key, f.a, f.b);
+    if (!o) continue;
+    const A = rows[f.a], B = rows[f.b];
+    A.p++; B.p++; A.gf += o.ga; A.ga += o.gb; B.gf += o.gb; B.ga += o.ga;
+    if (o.ga > o.gb) { A.w++; B.l++; A.pts += 3; }
+    else if (o.gb > o.ga) { B.w++; A.l++; B.pts += 3; }
+    else { A.d++; B.d++; A.pts++; B.pts++; }
+  }
+  return rows.sort((x, y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf || x.e.name.localeCompare(y.e.name));
+}
+
+// Knockout rounds derived from the slots and scores. undefined = not decided yet, null = bye.
+function koRounds() {
+  const rounds = [];
+  let cur = T.slots.slice();
+  for (let r = 0; cur.length > 1; r++) {
+    const ms = [], next = [];
+    for (let i = 0; i < cur.length; i += 2) {
+      const a = cur[i], b = cur[i + 1], key = `K${r}-${i / 2}`;
+      let winner, o = null;
+      if (a === undefined || b === undefined) winner = undefined;
+      else if (a === null || b === null) winner = a === null ? b : a;
+      else { o = outcome(key, a, b); winner = o ? o.winner : undefined; }
+      ms.push({ key, a, b, o, winner });
+      next.push(winner);
+    }
+    rounds.push(ms);
+    cur = next;
+  }
+  return { rounds, champion: cur[0] };
+}
+
+function roundName(matches) {
+  return { 1: "Final", 2: "Semi-finals", 4: "Quarter-finals" }[matches] || `Round of ${matches * 2}`;
+}
+
+function scoreInputs(key, a, b, o) {
+  const s = T.scores[key] && T.scores[key].a === a && T.scores[key].b === b ? T.scores[key] : {};
+  return `<input type="number" inputmode="numeric" min="0" max="99" data-key="${key}" data-side="ga" data-a="${a}" data-b="${b}" value="${s.ga ?? ""}" aria-label="Goals">` +
+    `<span>–</span>` +
+    `<input type="number" inputmode="numeric" min="0" max="99" data-key="${key}" data-side="gb" data-a="${a}" data-b="${b}" value="${s.gb ?? ""}" aria-label="Goals">`;
+}
+
+function pensHtml(m, A, B) {
+  const s = T.scores[m.key];
+  return `<div class="pens">Penalties:
+    <button class="btn liquid-glass${s.pen === "a" ? " chosen" : ""}" data-pen="a" data-key="${m.key}">${esc(A.name)}</button>
+    <button class="btn liquid-glass${s.pen === "b" ? " chosen" : ""}" data-pen="b" data-key="${m.key}">${esc(B.name)}</button></div>`;
+}
+
+function renderTour() {
+  const view = $("tourView");
+  $("tourSetup").hidden = !!T;
+  const n = $("tFrom").value === "draw" ? draw.rows.filter(r => r.team).length : players.length;
+  $("tSetupNote").textContent = `${n} entrant${n === 1 ? "" : "s"} ready.`;
+  if (!T) { view.innerHTML = ""; return; }
+
+  const E = T.entrants;
+  const fmtName = { league: "League", league2: "League · home & away", knockout: "Knockout" }[T.format];
+  let champion = null, body = "";
+
+  if (T.format === "knockout") {
+    const { rounds, champion: c } = koRounds();
+    if (c !== undefined && c !== null) champion = E[c];
+    body = `<div class="card liquid-glass"><h2>Bracket</h2><div class="bracket">` + rounds.map(ms => `
+      <div class="b-round"><div class="round-title">${roundName(ms.length)}</div><div class="b-matches">` + ms.map(m => {
+        const side = (x, won) => x === undefined ? `<div class="b-row"><span class="tbd">TBD</span></div>`
+          : x === null ? `<div class="b-row"><span class="tbd">Bye</span></div>`
+          : `<div class="b-row${m.winner === undefined ? "" : won ? " won" : " lost"}">${whoHtml(E[x])}</div>`;
+        const playable = m.a != null && m.b != null;
+        if (!playable) return `<div class="b-match">${side(m.a, m.winner === m.a)}${side(m.b, m.winner === m.b)}</div>`;
+        return `<div class="b-match${m.winner !== undefined ? " done" : ""}">
+          <div class="b-row${m.winner === undefined ? "" : m.winner === m.a ? " won" : " lost"}">${whoHtml(E[m.a])}</div>
+          <div class="b-row${m.winner === undefined ? "" : m.winner === m.b ? " won" : " lost"}">${whoHtml(E[m.b])}</div>
+          <div class="score" style="justify-content:center;margin-top:4px">${scoreInputs(m.key, m.a, m.b, m.o)}</div>
+          ${m.o && m.o.draw ? pensHtml(m, E[m.a], E[m.b]) : ""}
+        </div>`;
+      }).join("") + `</div></div>`).join("") + `</div></div>`;
+  } else {
+    const table = standings();
+    const done = T.fixtures.every(f => outcome(f.key, f.a, f.b));
+    if (done) champion = table[0].e;
+    const played = T.fixtures.filter(f => outcome(f.key, f.a, f.b)).length;
+    body = `<div class="card liquid-glass"><div class="card-head"><h2>Table</h2><span class="count" style="margin:0">${played}/${T.fixtures.length} played</span></div>
+      <div class="table-wrap"><table class="standings"><thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>` +
+      table.map((r, k) => `<tr class="${k === 0 && played ? "leader" : ""}"><td>${k + 1}</td><td>${whoHtml(r.e)}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</td><td><b>${r.pts}</b></td></tr>`).join("") +
+      `</tbody></table></div></div><div class="card liquid-glass"><h2>Fixtures</h2>`;
+    let lastRound = -1;
+    for (const f of T.fixtures) {
+      if (f.round !== lastRound) { body += `<div class="round-title">Matchday ${f.round + 1}</div>`; lastRound = f.round; }
+      body += `<div class="fixture${outcome(f.key, f.a, f.b) ? " played" : ""}">${whoHtml(E[f.a])}<div class="score">${scoreInputs(f.key, f.a, f.b)}</div>${whoHtml(E[f.b])}</div>`;
+    }
+    body += `</div>`;
+  }
+
+  const banner = champion
+    ? `<div class="tour-banner liquid-glass"><span class="trophy">🏆</span><div><div class="tb-label">Champion</div><div class="tb-name">${esc(champion.name)}</div>${champion.team ? `<div class="count" style="margin:2px 0 0">${esc(champion.team)}</div>` : ""}</div></div>`
+    : "";
+  view.innerHTML = banner + `<div class="card liquid-glass"><div class="card-head"><h2>${fmtName} · ${E.length} entrants</h2>
+      <div class="tour-actions"><button class="btn small liquid-glass" id="tEnd">End tournament</button></div></div>
+      <div class="count" style="margin:0">Type each score; results save automatically on this device.${T.format === "knockout" ? " Draws go to penalties." : ""}</div></div>` + body;
+  fillLogos(view);
+
+  if (champion && !T.celebrated) {
+    T.celebrated = true; saveTour();
+    Sound.win(); buzz([60, 40, 140]); Confetti.burst();
+  } else if (!champion && T.celebrated) { T.celebrated = false; saveTour(); }
+}
+
+// Score entry (event delegation, re-render after each change but keep focus)
+$("tourView").addEventListener("change", e => {
+  const inp = e.target.closest("input[data-key]");
+  if (!inp) return;
+  const { key, side } = inp.dataset, a = +inp.dataset.a, b = +inp.dataset.b;
+  const s = T.scores[key] && T.scores[key].a === a && T.scores[key].b === b ? T.scores[key] : { a, b };
+  s[side] = num(inp.value) == null ? "" : Math.max(0, Math.min(99, Math.round(+inp.value)));
+  if (num(s.ga) !== num(s.gb)) delete s.pen;
+  T.scores[key] = s;
+  saveTour();
+  const focusKey = document.activeElement?.dataset?.key, focusSide = document.activeElement?.dataset?.side;
+  renderTour();
+  if (focusKey) $("tourView").querySelector(`input[data-key="${focusKey}"][data-side="${focusSide}"]`)?.focus();
+});
+let endArmed = null;
+$("tourView").addEventListener("click", e => {
+  const pen = e.target.closest("[data-pen]");
+  if (pen) { T.scores[pen.dataset.key].pen = pen.dataset.pen; saveTour(); Sound.lock(); renderTour(); return; }
+  const end = e.target.closest("#tEnd");
+  if (!end) return;
+  if (endArmed) { clearTimeout(endArmed); endArmed = null; T = null; saveTour(); Sound.remove(); renderTour(); return; }
+  end.textContent = "Tap again to end";
+  endArmed = setTimeout(() => { endArmed = null; if (end.isConnected) end.textContent = "End tournament"; }, 3000);
+});
+$("tFrom").addEventListener("change", renderTour);
+
+// ---------- Keyboard: Space to randomise / spin ----------
+document.addEventListener("keydown", e => {
+  if (e.code !== "Space" || e.repeat || openSelect || assignMenu || $("splash").classList.contains("active")) return;
+  if (e.target.closest("input, textarea, select, button, [contenteditable], summary")) return;
+  if (currentTab === "picker" && !$("spinBtn").disabled) { e.preventDefault(); randomise(); }
+  else if (currentTab === "wheel" && !$("wSpin").disabled) { e.preventDefault(); spinWheel(); }
+});
+
+// ---------- Version switch ----------
+const versionSel = $("versionSel");
+versionSel.innerHTML = VERSIONS.map(v => `<option value="${v}">${esc(FC_DATA[v].label)}</option>`).join("");
+versionSel.addEventListener("change", () => {
+  loadVersion(versionSel.value);
+  renderLeagues();
+  // Picks from the other game may not exist here, so start the results fresh
+  if (draw.rows.length) { draw.rows = draw.rows.map(r => ({ name: r.name, team: TEAM_BY_NAME.has(r.team) ? r.team : null })); saveDraw(); }
+  renderResults();
+  updatePool();
+  if (currentTab === "tour") renderTour();
+  toast(`Switched to ${FC_DATA[version].label} ratings`);
+});
 
 // ---------- Init ----------
+loadVersion(load("fc-version", VERSIONS[VERSIONS.length - 1]));
+versionSel.value = version;
 document.querySelectorAll("select").forEach(enhanceSelect);
+versionSel._cs.wrap.hidden = VERSIONS.length < 2;  // nothing to switch between
 renderStarOptions();
 renderLeagues();
 renderPlayers();
+renderResults();
 renderList();
 wheelChanged();
-wheelData.forEach(s => { const t = s.team && TEAMS.find(x => x.name === s.team); if (t) preloadLogo(t); });
-showTab(load("fc26-tab", "picker") === "wheel" ? "wheel" : "picker");
+wheelData.forEach(s => { const t = s.team && TEAM_BY_NAME.get(s.team); if (t) preloadLogo(t); });
+showTab(load("fc26-tab", "picker"));
 </script>
 </body>
 </html>
